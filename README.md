@@ -1,5 +1,7 @@
 # AgriTrace
 
+**Live demo:** [https://agritrace-5ldg.onrender.com](https://agritrace-5ldg.onrender.com)
+
 **Every harvest has a story.** Farm-to-shelf agricultural traceability with role-controlled custody, cold-chain evidence, consumer QR journeys, and regulator audits.
 
 AgriTrace is an original implementation based on the supplied project synopsis. The three reference repositories informed the review of participant roles, custody and sensor tracking; this is not a renamed pharmaceutical application. See [REFERENCES.md](docs/REFERENCES.md).
