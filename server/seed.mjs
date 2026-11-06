@@ -1,7 +1,9 @@
-import { resolve } from 'node:path';
 import { DemoLedger } from './ledger.mjs';
 import { demoAccounts } from './accounts.mjs';
-const ledger = new DemoLedger(resolve(import.meta.dirname, 'data/ledger.json'));
+import { runtimeConfig } from './config.mjs';
+const { mode, dataFile } = runtimeConfig();
+if (mode !== 'demo') throw new Error('Demo seeding is disabled in Fabric mode');
+const ledger = new DemoLedger(dataFile);
 if ((await ledger.list()).length) { console.log('Demo ledger already has batches; seed left existing records intact.'); process.exit(0); }
 const [farmer, aggregator, transporter, processor, retailer, regulator] = demoAccounts;
 const farms = [

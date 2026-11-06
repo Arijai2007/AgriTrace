@@ -9,8 +9,10 @@ import { existsSync } from 'node:fs';
 import domain from '../chaincode/lib/domain.cjs';
 import { publicAccount, passwordMatches } from './accounts.mjs';
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024, files: 1 } });
-export function createApp({ ledger, accounts, secret = randomBytes(48).toString('hex'), ipfsApi = process.env.IPFS_API, clientDir = resolve(import.meta.dirname, '../client/dist') }) {
+export function createApp({ ledger, accounts, secret = randomBytes(48).toString('hex'), ipfsApi = process.env.IPFS_API, clientDir = resolve(import.meta.dirname, '../client/dist'), trustProxyHops = 0 }) {
   const app = express(); app.disable('x-powered-by');
+  // Only trust the configured number of hosting proxies, rather than all forwarded headers.
+  app.set('trust proxy', trustProxyHops);
   app.use(helmet({ contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], scriptSrc: ["'self'"], styleSrc: ["'self'", "'unsafe-inline'"], imgSrc: ["'self'", 'data:', 'https://*.tile.openstreetmap.org'], connectSrc: ["'self'", 'https://*.tile.openstreetmap.org', 'https://*.infura.io', 'https://*.alchemy.com', 'https://ethereum-sepolia-rpc.publicnode.com'], objectSrc: ["'none'"] } } }));
   app.use(express.json({ limit: '64kb' }));
   app.use('/api', rateLimit({ windowMs: 60_000, limit: 180, standardHeaders: 'draft-8', legacyHeaders: false }));

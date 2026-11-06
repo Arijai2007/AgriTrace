@@ -1,0 +1,29 @@
+# One service hosts both the React portal and Express API.
+# Free classroom demo: files reset when Render restarts, redeploys or sleeps.
+services:
+  - type: web
+    name: agritrace
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start:demo
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22
+      - key: HOST
+        value: 0.0.0.0
+      - key: TRUST_PROXY_HOPS
+        value: "1"
+      - key: LEDGER_MODE
+        value: demo
+      - key: DATA_FILE
+        value: /tmp/agritrace/ledger.json
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_PASSWORD
+        sync: false

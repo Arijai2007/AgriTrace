@@ -2,7 +2,7 @@
 
 ## Locally exercised
 
-- **16 automated tests pass**; the root dependency audit reports **zero known vulnerabilities** at delivery. solc's pinned temporary-file dependency is overridden to tmp 0.2.7 to include its upstream security fixes.
+- **18 automated tests pass**; the root dependency audit reports **zero known vulnerabilities** at initial delivery. solc's pinned temporary-file dependency is overridden to tmp 0.2.7 to include its upstream security fixes.
 - React production bundle builds successfully using Vite.
 - `BatchAnchor.sol` compiles with solc 0.8.38 using the Paris EVM target.
 - Node tests exercise batch registration, authorization, quantity/date/coordinate bounds, CA-derived Fabric roles, registered recipients, custody transfer, cold-chain alerts, certificate metadata validation, final recalls, complaint resolution, immutable event contents, projection tampering, canonical hashes and Merkle inclusion proofs.
@@ -12,6 +12,7 @@
 - The four-org generator produces a Compose description and channel configuration with four peers, four CouchDB instances, five Fabric CAs and one orderer.
 - Browser checks cover sign-in, dashboard data, batch timeline, verification disclosure and the generated QR dialog. Mobile browser registration and a custody handover were exercised.
 - The resulting handover was verified on the public consumer page. The 390px mobile consumer view has no document-level horizontal overflow; the wide batch register scrolls inside its own container.
+- Render deployment checks exercise production settings, an external data-file path, safe reseeding, record/session preservation across process restart, and rejection of seeding in Fabric mode. `npm run smoke` also verifies the built frontend, compiled assets, consumer deep links and API on a single production-mode server.
 
 The authoritative commands are `npm test`, `npm run build` and `npm run anchor:compile`. Check the CI run on the repository for the exact committed version's result. Unit and API tests create and remove their own temporary records; they do not clear the demo ledger.
 

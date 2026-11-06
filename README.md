@@ -4,6 +4,16 @@
 
 AgriTrace is an original implementation based on the supplied project synopsis. The three reference repositories informed the review of participant roles, custody and sensor tracking; this is not a renamed pharmaceutical application. See [REFERENCES.md](docs/REFERENCES.md).
 
+## Deploy the college demo
+
+**Recommended: one Render web service for both the website and API.** The included free-plan Blueprint builds the app, loads sample batches on first startup, and provides one HTTPS URL for sign-in and consumer QR links.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Arihant2007/AgriTrace)
+
+Choose a demo password when Render prompts for `DEMO_PASSWORD`; use it for all six demonstration accounts. No wallet key is needed. This deployment runs the explicitly labelled **demo ledger**, not a live Fabric network.
+
+**Free-hosting limitation:** records reset when Render restarts, redeploys or spins down; the sample batches are seeded again. Keep your viva's custom batch flow within one session, open the app beforehand to allow startup, and keep a local copy as a backup. Persistent demo records require a paid disk or a separately configured database. The Blueprint creates no paid resources. See [the full Render deployment guide](docs/DEPLOYMENT.md).
+
 ## Run the project
 
 Install **Node.js 22 or 24 LTS**. In this directory:
@@ -59,6 +69,7 @@ Seeded batch `AGR-2026-001` is already in Ravi’s custody; `AGR-2026-002` is at
 Copy `.env.example` to `.env` for local configuration. `.env`, keys, enrollment materials, runtime ledgers and generated builds are excluded from Git.
 
 - [Fabric setup and four-organization network](docs/FABRIC.md)
+- [Render deployment and viva checklist](docs/DEPLOYMENT.md)
 - [IPFS, MQTT, Sepolia and wallet setup](docs/INTEGRATIONS.md)
 - [Architecture, scope mapping and limitations](docs/ARCHITECTURE.md)
 - [API reference and example requests](docs/API.md)

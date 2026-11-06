@@ -14,6 +14,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - run: npm run smoke
       - run: npm run anchor:compile
       - run: node infra/generate.mjs
       - run: docker compose -f infra/generated/compose.json --profile ca --profile network config --quiet
