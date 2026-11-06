@@ -1,0 +1,14 @@
+import { resolve } from 'node:path';
+import { createApp } from './app.mjs';
+import { loadAccounts } from './accounts.mjs';
+import { DemoLedger, FabricLedger } from './ledger.mjs';
+const mode = process.env.LEDGER_MODE || 'demo';
+if (!['demo', 'fabric'].includes(mode)) throw new Error('LEDGER_MODE must be demo or fabric');
+const accounts = await loadAccounts(mode);
+const secret = process.env.JWT_SECRET;
+if (mode === 'fabric' && (!secret || secret.length < 32)) throw new Error('Set a strong JWT_SECRET (32+ characters) for Fabric mode');
+const ledger = mode === 'demo' ? new DemoLedger(process.env.DATA_FILE || resolve(import.meta.dirname, 'data/ledger.json')) : new FabricLedger(accounts);
+const app = createApp({ ledger, accounts, secret });
+const host = process.env.HOST || '127.0.0.1', port = Number(process.env.PORT || 4000);
+const server = app.listen(port, host, () => console.log(`AgriTrace API: http://${host}:${port} · ${mode === 'demo' ? 'LOCAL DEMO (not a distributed blockchain)' : 'Hyperledger Fabric'}`));
+for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => server.close(() => process.exit(0)));

@@ -1,0 +1,20 @@
+name: AgriTrace checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm run anchor:compile
+      - run: node infra/generate.mjs
+      - run: docker compose -f infra/generated/compose.json --profile ca --profile network config --quiet
+      - run: bash -n infra/network.sh infra/enroll.sh

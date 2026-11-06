@@ -1,0 +1,47 @@
+{
+  "name": "agritrace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Farm-to-shelf agricultural traceability with Fabric and public Merkle anchors",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB \"node --watch --env-file-if-exists=.env server/index.mjs\" \"vite client --config client/vite.config.js --host 127.0.0.1\"",
+    "build": "vite build client --config client/vite.config.js",
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "test": "node --test tests/*.test.cjs tests/*.test.mjs",
+    "seed": "node server/seed.mjs",
+    "sensor": "node scripts/sensor.mjs",
+    "mqtt:gateway": "node scripts/mqtt-gateway.mjs",
+    "anchor:compile": "node scripts/compile-anchor.mjs"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "concurrently": "^9.2.1",
+    "fabric-contract-api": "^2.5.8",
+    "solc": "0.8.38",
+    "vite": "^7.1.9"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.0",
+    "@hyperledger/fabric-gateway": "^1.8.0",
+    "ethers": "^6.15.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.468.0",
+    "mqtt": "^5.14.1",
+    "multer": "^2.0.2",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "overrides": {
+    "solc": {
+      "tmp": "0.2.7"
+    }
+  }
+}
