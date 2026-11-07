@@ -1,5 +1,8 @@
 # AgriTrace
 
+**New: real Ethereum ledger with MetaMask transactions.** Run `npm run blockchain`, then `npm run build` and `npm run start:ethereum` in a second terminal. Follow [the Ethereum setup guide](docs/ETHEREUM.md). The existing hosted demo below is still a separate file-backed deployment until reconfigured.
+
+
 **Live demo:** [https://agritrace-5ldg.onrender.com](https://agritrace-5ldg.onrender.com)
 
 **Every harvest has a story.** Farm-to-shelf agricultural traceability with role-controlled custody, cold-chain evidence, consumer QR journeys, and regulator audits.

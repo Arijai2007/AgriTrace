@@ -21,12 +21,16 @@ export function createApp({ ledger, accounts, secret = randomBytes(48).toString(
     try { const claims = jwt.verify((req.headers.authorization || '').replace(/^Bearer /, ''), secret, { algorithms: ['HS256'], issuer: 'agritrace', audience: 'agritrace-web' }); req.actor = accounts.find(a => a.id === claims.sub); if (!req.actor) throw new Error(); next(); }
     catch { res.status(401).json({ error: 'Please sign in again' }); }
   };
-  app.get('/api/health', (req, res) => res.json({ status: 'ok', ledgerMode: ledger.mode, ipfsConfigured: Boolean(ipfsApi), anchorAddress: process.env.ANCHOR_ADDRESS || null }));
-  app.get('/api/demo/accounts', (req, res) => ledger.mode === 'demo' ? res.json(accounts.map(publicAccount)) : res.status(404).json({ error: 'Demo login is disabled' }));
+  app.get('/api/health', (req, res) => res.json({ status: 'ok', ledgerMode: ledger.mode, ipfsConfigured: Boolean(ipfsApi), anchorAddress: process.env.ANCHOR_ADDRESS || null, ethereum: ledger.mode === 'ethereum' ? { chainId: ledger.chainId, contract: ledger.contract.target } : null }));
+  app.get('/api/demo/accounts', (req, res) => ['demo', 'ethereum'].includes(ledger.mode) ? res.json(accounts.map(publicAccount)) : res.status(404).json({ error: 'Demo login is disabled' }));
   app.post('/api/auth/login', rateLimit({ windowMs: 15 * 60_000, limit: 30 }), safe(async (req, res) => {
     const account = accounts.find(a => a.id === req.body.id);
     if (!account || !passwordMatches(req.body.password, account)) return res.status(401).json({ error: 'Incorrect account or password' });
     res.json({ user: publicAccount(account), token: jwt.sign({}, secret, { algorithm: 'HS256', subject: account.id, issuer: 'agritrace', audience: 'agritrace-web', expiresIn: '2h' }) });
+  }));
+  app.get('/api/transactions/:hash', auth, safe(async (req, res) => {
+    if (ledger.mode !== 'ethereum') return res.status(404).json({ error: 'Ethereum mode is not active' });
+    res.json(await ledger.receipt(req.params.hash, req.actor));
   }));
   app.get('/api/me', auth, (req, res) => res.json(publicAccount(req.actor)));
   app.get('/api/participants', auth, (req, res) => res.json(accounts.map(publicAccount)));
@@ -35,7 +39,7 @@ export function createApp({ ledger, accounts, secret = randomBytes(48).toString(
   // Consumer read access is deliberately public. No unauthenticated write endpoint exists.
   app.get('/api/trace/:id', safe(async (req, res) => {
     const batch = await ledger.get(req.params.id);
-    res.json({ batch, verification: { valid: domain.verifyBatch(batch), root: batch.root, eventCount: batch.events.length, ledgerMode: ledger.mode, publicAnchor: false } });
+    res.json({ batch, verification: { valid: domain.verifyBatch(batch), root: batch.root, eventCount: batch.events.length, ledgerMode: ledger.mode, publicAnchor: false, ...(ledger.mode === 'ethereum' ? { blockchain: await ledger.evidence(batch.id) } : {}) } });
   }));
   app.get('/api/trace/:id/proof/:index', safe(async (req, res) => {
     const b = await ledger.get(req.params.id), index = Number(req.params.index);

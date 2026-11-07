@@ -14,11 +14,11 @@ export function passwordMatches(password, account) {
   const a = scryptSync(password, account.salt, 64), b = Buffer.from(account.hash, 'hex');
   return a.length === b.length && timingSafeEqual(a, b);
 }
-export const publicAccount = ({ id, name, role, organization }) => ({ id, name, role, organization });
+export const publicAccount = ({ id, name, role, organization, wallet }) => ({ id, name, role, organization, ...(wallet ? { wallet } : {}) });
 export async function loadAccounts(mode) {
   if (mode === 'demo') return demoAccounts.map(a => ({ ...a, ...passwordHash(process.env.DEMO_PASSWORD || 'agritrace-demo') }));
-  if (!process.env.ACCOUNTS_FILE) throw new Error('ACCOUNTS_FILE is required in Fabric mode');
+  if (!process.env.ACCOUNTS_FILE) throw new Error('ACCOUNTS_FILE is required in blockchain mode');
   const accounts = JSON.parse(await readFile(process.env.ACCOUNTS_FILE, 'utf8'));
-  if (!Array.isArray(accounts) || !accounts.length || accounts.some(a => !a.fabric || !a.hash || !a.salt)) throw new Error('Invalid trusted accounts configuration');
+  if (!Array.isArray(accounts) || !accounts.length || accounts.some(a => (mode === 'fabric' ? !a.fabric : !/^0x[0-9a-fA-F]{40}$/.test(a.wallet)) || !a.hash || !a.salt)) throw new Error('Invalid trusted accounts configuration');
   return accounts;
 }
