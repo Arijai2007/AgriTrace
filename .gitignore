@@ -13,3 +13,5 @@ coverage/
 *.key
 playwright-report/
 test-results/
+
+.local/

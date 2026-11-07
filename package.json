@@ -16,12 +16,17 @@
     "smoke": "node scripts/smoke.mjs",
     "sensor": "node scripts/sensor.mjs",
     "mqtt:gateway": "node scripts/mqtt-gateway.mjs",
-    "anchor:compile": "node scripts/compile-anchor.mjs"
+    "anchor:compile": "node scripts/compile-anchor.mjs",
+    "blockchain": "node scripts/local-blockchain.mjs",
+    "start:ethereum": "node --env-file=.env.ethereum.local server/index.mjs",
+    "dev:ethereum": "node --env-file=.env.ethereum.local node_modules/concurrently/dist/bin/concurrently.js -k \"node --env-file=.env.ethereum.local server/index.mjs\" \"vite client --config client/vite.config.js --host 127.0.0.1\"",
+    "ledger:compile": "node scripts/compile-ledger.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.4",
     "concurrently": "^9.2.1",
     "fabric-contract-api": "^2.5.8",
+    "ganache": "^7.9.2",
     "solc": "0.8.38",
     "vite": "^7.1.9"
   },
