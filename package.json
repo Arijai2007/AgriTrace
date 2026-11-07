@@ -26,6 +26,8 @@
     "vite": "^7.1.9"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
     "@grpc/grpc-js": "^1.14.0",
     "@hyperledger/fabric-gateway": "^1.8.0",
     "ethers": "^6.15.0",

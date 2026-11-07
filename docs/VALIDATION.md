@@ -13,6 +13,8 @@
 - Browser checks cover sign-in, dashboard data, batch timeline, verification disclosure and the generated QR dialog. Mobile browser registration and a custody handover were exercised.
 - The resulting handover was verified on the public consumer page. The 390px mobile consumer view has no document-level horizontal overflow; the wide batch register scrolls inside its own container.
 - Render deployment checks exercise production settings, an external data-file path, safe reseeding, record/session preservation across process restart, and rejection of seeding in Fabric mode. `npm run smoke` also verifies the built frontend, compiled assets, consumer deep links and API on a single production-mode server.
+- The refreshed UI was reviewed on desktop and at a 390px viewport: sign-in, real custody counts, mobile navigation, harvest dialog and consumer journey. Self-hosted fonts, decorative route motion, number transitions and dialog entrances are included. CSS and number animations respect the reduced-motion preference; browser emulation of that preference was not performed because access was declined.
+- Map requests use the documented OpenStreetMap tile hostname and an origin-preserving referrer policy. The checkpoint map was visually verified loading after the correction, and the production smoke check covers the response policy.
 
 The authoritative commands are `npm test`, `npm run build` and `npm run anchor:compile`. Check the CI run on the repository for the exact committed version's result. Unit and API tests create and remove their own temporary records; they do not clear the demo ledger.
 

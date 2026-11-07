@@ -20,6 +20,8 @@ try {
   });
   for (const route of ['/', '/trace/AGR-2026-001']) {
     const response = await fetch(base + route); assert.equal(response.status, 200);
+    assert.equal(response.headers.get('referrer-policy'), 'strict-origin-when-cross-origin', 'Map requests must retain an origin referrer');
+    assert.ok(response.headers.get('content-security-policy').includes('https://tile.openstreetmap.org'), 'Map tile origin must be allowed');
     const html = await response.text(); assert.match(html, /<title>AgriTrace/);
     const asset = html.match(/src="([^"]+\.js)"/); assert.ok(asset, 'Built JavaScript must be present');
     assert.equal((await fetch(base + asset[1])).status, 200);

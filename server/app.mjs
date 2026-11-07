@@ -13,7 +13,7 @@ export function createApp({ ledger, accounts, secret = randomBytes(48).toString(
   const app = express(); app.disable('x-powered-by');
   // Only trust the configured number of hosting proxies, rather than all forwarded headers.
   app.set('trust proxy', trustProxyHops);
-  app.use(helmet({ contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], scriptSrc: ["'self'"], styleSrc: ["'self'", "'unsafe-inline'"], imgSrc: ["'self'", 'data:', 'https://*.tile.openstreetmap.org'], connectSrc: ["'self'", 'https://*.tile.openstreetmap.org', 'https://*.infura.io', 'https://*.alchemy.com', 'https://ethereum-sepolia-rpc.publicnode.com'], objectSrc: ["'none'"] } } }));
+  app.use(helmet({ referrerPolicy: { policy: 'strict-origin-when-cross-origin' }, contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], scriptSrc: ["'self'"], styleSrc: ["'self'", "'unsafe-inline'"], imgSrc: ["'self'", 'data:', 'https://tile.openstreetmap.org'], connectSrc: ["'self'", 'https://tile.openstreetmap.org', 'https://*.infura.io', 'https://*.alchemy.com', 'https://ethereum-sepolia-rpc.publicnode.com'], objectSrc: ["'none'"] } } }));
   app.use(express.json({ limit: '64kb' }));
   app.use('/api', rateLimit({ windowMs: 60_000, limit: 180, standardHeaders: 'draft-8', legacyHeaders: false }));
   const safe = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
