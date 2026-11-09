@@ -8,7 +8,7 @@ The repository includes `render.yaml` with the free plan and Singapore region. I
 
 ## Deploy from GitHub
 
-1. Open [Deploy AgriTrace to Render](https://render.com/deploy?repo=https://github.com/Arihant2007/AgriTrace), sign in, and select your workspace.
+1. Open [Deploy AgriTrace to Render](https://render.com/deploy?repo=https://github.com/Arijai2007/AgriTrace), sign in, and select your workspace.
 2. Review the Blueprint: one free Node web service. Set `DEMO_PASSWORD` to a password you can share with your project team/examiner. Render generates the independent `JWT_SECRET` automatically.
 3. Create the Blueprint and wait for its first deployment to finish. Render chooses an available `onrender.com` address; the repository does not assume a particular hostname.
 4. Open the returned URL, choose any account and sign in with the password you provided. The default password shown in the UI applies only if you leave the local default in use; for this deployment use your chosen Render password.

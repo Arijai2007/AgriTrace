@@ -13,7 +13,7 @@ AgriTrace is an original implementation based on the supplied project synopsis. 
 
 **Recommended: one Render web service for both the website and API.** The included free-plan Blueprint builds the app, loads sample batches on first startup, and provides one HTTPS URL for sign-in and consumer QR links.
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Arihant2007/AgriTrace)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Arijai2007/AgriTrace)
 
 Choose a demo password when Render prompts for `DEMO_PASSWORD`; use it for all six demonstration accounts. No wallet key is needed. This deployment runs the explicitly labelled **demo ledger**, not a live Fabric network.
 
