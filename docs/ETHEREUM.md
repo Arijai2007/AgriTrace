@@ -39,7 +39,17 @@ Local Ganache is a real EVM blockchain for development, controlled by its operat
 
 Full batch snapshots are public and limited to 64 KiB. Repeated snapshots are expensive on public networks; use small synthetic records on Sepolia. Never enter personal or confidential data. Event `txId` values are application event identifiers; actual Ethereum hashes and blocks are shown separately in Verification.
 
-## Sepolia deployment
+## Sepolia deployment through MetaMask
+
+Run `npm run setup:sepolia` on your own computer and open the local URL printed by the command in the browser containing MetaMask. This local page compiles the actual ledger contract, connects your wallet, switches to Sepolia and lets you review and approve contract creation. It never requests your wallet private key or recovery phrase.
+
+Use a separate test wallet funded with Sepolia test ETH. The local command generates a separate API validator key under `.local/sepolia/validator.json`; that key is used for server approvals, not wallet gas payments, and must later be configured as a Render secret. Do not delete it after deploying the contract: the contract's validator address is immutable.
+
+After a deployment confirms, the local helper checks the actual transaction input and receipt on Sepolia and saves its public details in `.local/sepolia/deployment.json`. A pending transaction hash is saved in browser local storage so you can use **Check submitted deployment** after a reload. The helper does not itself change Render or bind participant wallets. Those steps follow after a successful deployment.
+
+The local page binds only to `127.0.0.1:4317`, rejects other Host/Origin values, and requires a per-run token for its API. Do not expose this setup server through a public tunnel. If the default public RPC is unavailable, set `ETH_RPC_URL` before running the command.
+
+## Sepolia deployment through a script
 
 Use a separate test wallet funded with Sepolia test ETH. Do not reuse the generated local keys. Compile with `npm run ledger:compile`, then deploy using:
 
