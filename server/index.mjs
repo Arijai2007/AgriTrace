@@ -5,7 +5,7 @@ import { EthereumLedger } from './ethereum.mjs';
 import { runtimeConfig } from './config.mjs';
 const { mode, secret, host, port, dataFile, trustProxyHops } = runtimeConfig();
 const accounts = await loadAccounts(mode);
-const ledger = mode === 'demo' ? new DemoLedger(dataFile) : mode === 'fabric' ? new FabricLedger(accounts) : new EthereumLedger({ rpcUrl: process.env.ETH_RPC_URL, address: process.env.ETH_LEDGER_ADDRESS, validatorKey: process.env.ETH_VALIDATOR_KEY, chainId: process.env.ETH_CHAIN_ID });
+const ledger = mode === 'demo' ? new DemoLedger(dataFile) : mode === 'fabric' ? new FabricLedger(accounts) : new EthereumLedger({ rpcUrl: process.env.ETH_RPC_URL, address: process.env.ETH_LEDGER_ADDRESS, validatorKey: process.env.ETH_VALIDATOR_KEY, chainId: process.env.ETH_CHAIN_ID, deploymentBlock: process.env.ETH_DEPLOYMENT_BLOCK || 0 });
 if (mode === 'ethereum') await ledger.ready();
 const app = createApp({ ledger, accounts, secret, trustProxyHops });
 const server = app.listen(port, host, () => console.log(`AgriTrace API: http://${host}:${server.address().port} · ${mode === 'demo' ? 'DEMO (not a distributed blockchain)' : mode === 'fabric' ? 'Hyperledger Fabric' : 'Ethereum wallet transactions'}`));

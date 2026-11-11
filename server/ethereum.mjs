@@ -10,11 +10,13 @@ export const ledgerAbi = [
 ];
 export class EthereumLedger {
   mode = 'ethereum';
-  constructor({ rpcUrl, address, validatorKey, chainId }) {
+  constructor({ rpcUrl, address, validatorKey, chainId, deploymentBlock = 0 }) {
     this.provider = new JsonRpcProvider(rpcUrl, undefined, { cacheTimeout: -1 });
     this.contract = new Contract(address, ledgerAbi, this.provider);
     this.validator = new Wallet(validatorKey);
     this.chainId = Number(chainId);
+    this.deploymentBlock = Number(deploymentBlock);
+    if (!Number.isSafeInteger(this.deploymentBlock) || this.deploymentBlock < 0) throw new Error('Invalid Ethereum deployment block');
   }
   async ready() {
     if (Number((await this.provider.getNetwork()).chainId) !== this.chainId) throw new Error('Ethereum chain ID mismatch');
@@ -59,10 +61,17 @@ export class EthereumLedger {
     const batch = domain.mutateBatch(current, action, input, actor, { timestamp: new Date().toISOString(), txId: randomUUID() });
     return this.prepare(batch, actor, previous);
   }
-  async evidence(batchId) {
-    const logs = await this.contract.queryFilter(this.contract.filters.BatchCommitted(id(batchId)), 0, 'latest');
-    const log = logs.at(-1);
-    return log ? { transactionHash: log.transactionHash, blockNumber: log.blockNumber, chainId: this.chainId, contract: this.contract.target } : null;
+  async evidence(batchId, batch) {
+    const expected = batch ? keccak256(toUtf8Bytes(domain.canonical(batch))) : null;
+    const filter = this.contract.filters.BatchCommitted(id(batchId));
+    for (let end = await this.provider.getBlockNumber(); end >= this.deploymentBlock;) {
+      const start = Math.max(this.deploymentBlock, end - 4999);
+      const logs = await this.contract.queryFilter(filter, start, end);
+      const log = logs.reverse().find(l => !expected || l.args.digest === expected);
+      if (log) return { transactionHash: log.transactionHash, blockNumber: log.blockNumber, chainId: this.chainId, contract: this.contract.target };
+      end = start - 1;
+    }
+    return null;
   }
   async receipt(hash, actor) {
     if (!/^0x[0-9a-fA-F]{64}$/.test(hash)) throw new Error('Invalid transaction hash');

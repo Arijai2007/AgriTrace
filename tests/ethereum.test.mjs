@@ -6,6 +6,22 @@ import { artifact } from '../scripts/compile-ledger.mjs';
 import { EthereumLedger } from '../server/ethereum.mjs';
 import domain from '../chaincode/lib/domain.cjs';
 
+test('Ethereum receipt lookup pages backwards within the deployment block range', async () => {
+  const calls = [];
+  const ledger = Object.create(EthereumLedger.prototype);
+  ledger.chainId = 11155111; ledger.deploymentBlock = 100;
+  ledger.provider = { getBlockNumber: async () => 12340 };
+  ledger.contract = {
+    target: 'contract', filters: { BatchCommitted: key => key },
+    queryFilter: async (filter, start, end) => {
+      calls.push([start, end]);
+      return calls.length === 2 ? [{ transactionHash: 'confirmed', blockNumber: 7000 }] : [];
+    }
+  };
+  assert.equal((await ledger.evidence('BATCH')).transactionHash, 'confirmed');
+  assert.deepEqual(calls, [[7341, 12340], [2341, 7340]]);
+});
+
 test('Ethereum: mined wallet writes, on-chain reads, custody, tamper rejection, replay protection and receipts', async () => {
   const node = ganache.server({ logging: { quiet: true }, chain: { chainId: 1337 } });
   await node.listen(0, '127.0.0.1');
@@ -39,6 +55,9 @@ test('Ethereum: mined wallet writes, on-chain reads, custody, tamper rejection, 
     const next = await ledger.update(input.id, 'transfer', { recipient: receiver, quantity: 99, price: 25, grade: 'A', note: 'Real transaction', location: input.location }, farmer);
     const moved = await farmerWallet.sendTransaction({ to: next.walletTransaction.to, data: next.walletTransaction.data }); await moved.wait();
     assert.equal((await ledger.get(input.id)).holder.id, receiver.id);
+    const { blockchain, ...snapshot } = receipt;
+    assert.equal((await ledger.evidence(input.id, snapshot)).transactionHash, sent.hash);
+    assert.equal((await ledger.evidence(input.id)).transactionHash, moved.hash);
     await assert.rejects(ledger.update(input.id, 'sensor', { temperature: 8, humidity: 70, deviceId: 'S1', location: input.location }, farmer));
     assert.equal((await ledger.list()).length, 1);
     assert.notEqual(await contract.heads(id(input.id)), parsed.args[1]);
