@@ -7,7 +7,7 @@
 - The owner approved the first real harvest transaction for `AGR-DEMO-20261112-001`: `0xc8e4220198d572b6b54fb8f1ab83946542d190fbd9cb5c20d13cc6d7ea9dd7c0`, block 12117890.
 - The farmer-to-mandi transfer was mined in block 12117898: `0xa32b5f043d85131efaf7ae2d13c299cb5548e0448777f1baeb97be35b52b13f5`. The public trace read the updated holder and passed integrity validation.
 - An authenticated transfer request by the former farmer holder was rejected with HTTP 403 before wallet submission.
-- Four handovers through farmer, mandi, transporter, warehouse and retailer are confirmed on Sepolia. The retailer holds 99 kg after a recorded 1 kg handling loss. A manually entered simulated reading of 25 C and 94% humidity is preserved with `alert: true`; the retailer complaint is also confirmed. Seven committed snapshots and all seven inclusion proofs were independently checked. Recall and resolution acceptance checks are still awaiting owner wallet approval. No MQTT or physical sensor acquisition is claimed by this test.
+- Four handovers through farmer, mandi, transporter, warehouse and retailer are confirmed on Sepolia. The retailer holds 99 kg after a recorded 1 kg handling loss. A manually entered simulated reading of 25 C and 94% humidity is preserved with `alert: true`; the retailer complaint is also confirmed. Seven committed snapshots and their inclusion proofs were independently checked before recall. The subsequent regulator recall and complaint resolution were approved by the owner. A direct Sepolia contract read confirmed nine events, recalled status, and a resolved complaint. Final inclusion-proof export for all nine events and the consumer QR scan still require completion. No MQTT or physical sensor acquisition is claimed by this test.
 - A non-regulator recall request was rejected with HTTP 403. A desktop sidebar scrolling issue discovered during role switching was fixed and the production bundle rebuilt.
 
 ## Locally exercised
@@ -38,3 +38,13 @@ The authoritative commands are `npm test`, `npm run build` and `npm run anchor:c
 
 Do not present a configured adapter, stubbed contract test or successful compiler result as proof that its external network is live. Follow the integration and Fabric acceptance instructions to close those checks.
 
+
+## Latest continuation checkpoint
+
+- All nine classroom transactions are on Sepolia: harvest, four custody transfers, simulated cold-chain reading, complaint, recall, and complaint resolution.
+- Recall transaction: `0xdcd8a5f3071153821a2b7677f281f5816342ebe919735712f68cbc5c60d64f7f`, block 12117971.
+- After recall, the retailer's transfer and sensor update requests were both rejected with HTTP 400 and `Recalled batches cannot be modified or transferred`.
+- A direct contract read confirmed the complaint is resolved and the batch remains recalled, with nine events.
+- One public trace request returned HTTP 502 during the last check; the direct chain read succeeded. Recheck Render health and the final public trace before claiming the final consumer acceptance test is complete.
+- Next work: export all nine receipts/proofs and confirmation-time measurements, verify the public QR journey, then reconcile the Ethereum implementation with the original Fabric synopsis and configure IPFS/MQTT if required.
+- Keep `.local/`, environment files, validator keys and wallet secrets out of Git. Render secrets were already configured with the owner's approval. No participant wallet private key was exported.
