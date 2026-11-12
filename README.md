@@ -1,9 +1,11 @@
 # AgriTrace
 
-**New: real Ethereum ledger with MetaMask transactions.** Run `npm run blockchain`, then `npm run build` and `npm run start:ethereum` in a second terminal. Follow [the Ethereum setup guide](docs/ETHEREUM.md). The existing hosted demo below is still a separate file-backed deployment until reconfigured.
+**New: real Ethereum ledger with MetaMask transactions.** Run `npm run blockchain`, then `npm run build` and `npm run start:ethereum` in a second terminal. Follow [the Ethereum setup guide](docs/ETHEREUM.md). The live Render service now uses Ethereum Sepolia. The default Render Blueprint below remains an alternative file-backed demo template; do not sync its demo settings over the configured live service.
 
 
-**Live demo:** [https://agritrace-5ldg.onrender.com](https://agritrace-5ldg.onrender.com)
+**Live app:** [https://agritrace-5ldg.onrender.com](https://agritrace-5ldg.onrender.com)
+
+**Live network: Ethereum Sepolia.** Contract: [`0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43`](https://sepolia.etherscan.io/address/0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43). All six classroom role logins are bound to one owner-controlled test wallet. The API validator remains trusted for business-rule approvals. Live batches start empty; local seeded examples are not migrated to the chain.
 
 **Every harvest has a story.** Farm-to-shelf agricultural traceability with role-controlled custody, cold-chain evidence, consumer QR journeys, and regulator audits.
 

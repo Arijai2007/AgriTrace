@@ -1,5 +1,7 @@
 # Deploy AgriTrace for a college demonstration
 
+**Existing live service:** now configured for Ethereum Sepolia with `npm start`, the deployed ledger contract, a server validator secret, and `/etc/secrets/accounts.json`. Follow [ETHEREUM.md](ETHEREUM.md) for this configuration. The instructions below describe the alternative file-backed demo Blueprint. Do not sync that Blueprint over the live Ethereum configuration.
+
 ## Recommended setup
 
 Use **one Render web service** for the built React frontend and the Express API. They share one HTTPS address, so API calls, consumer routes, QR links and certificate digest checks work without cross-origin settings. Vercel and Streamlit are unnecessary for this version.
