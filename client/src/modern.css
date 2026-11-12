@@ -36,6 +36,10 @@ h2 { font-weight: 750; }
 .sidebar { width: 242px; padding: 32px 19px 0; color: #d8e5d8; background: #173c2f; border: 0; }
 .sidebar:before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 100% 100%, #4677582c, transparent 60%); pointer-events: none; }
 .sidebar > * { position: relative; }
+@media (min-width: 601px) {
+  .sidebar { overflow-y: auto; overflow-x: hidden; }
+  .sidebar > * { flex-shrink: 0; }
+}
 .sidebar .brand { margin: 0 10px 45px; font-size: 27px; color: #fff; letter-spacing: -1.4px; }
 .brand-icon { border-radius: 13px; }
 .sidebar .brand-icon { color: #d2f995; background: #31563f; border: 1px solid #59774b50; }
