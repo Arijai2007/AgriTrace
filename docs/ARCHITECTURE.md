@@ -1,5 +1,13 @@
 # Architecture and synopsis mapping
 
+## Current deployment versus the original proposal
+
+The live Render service currently runs **Ethereum mode on Sepolia**, using `AgriTraceLedger.sol` as the record store. Participants submit MetaMask-signed transactions. The API validates agricultural business rules and signs wallet-bound approvals; Solidity validates those approvals and version ordering. This is a hybrid trust model, not independent on-chain enforcement of all agricultural rules.
+
+For the owner-approved classroom configuration, all six role logins share one test wallet. The API stores only its separate validator signing key; participant wallet keys remain in MetaMask. The Fabric mode described below is an alternative implementation whose live four-organization network is not yet validated. The original synopsis requires that Fabric architecture, so submission scope must be reconciled with the supervisor.
+
+The following diagram describes the **original Fabric target**, not the current Sepolia deployment.
+
 ```mermaid
 flowchart LR
   Farmer[Farmer mobile web] --> API[Express API + JWT]
@@ -59,7 +67,7 @@ This encoding is intentionally documented: a library which hashes concatenated r
 
 - Demo mode defaults to loopback. Change HOST only for a controlled demonstration; known demo credentials are unsuitable for public hosting.
 - Passwords are salted with scrypt; JWTs use HS256, issuer/audience checks, a two-hour expiry, and an administrator-controlled secret in Fabric mode. Browser tokens are kept in session storage. There is no password recovery or account-management UI.
-- The API is a trust boundary holding participants' private keys. Protect that server and its trusted accounts file. Moving signing into separate organizational gateways would improve organizational independence.
+- In Fabric mode, the API is a trust boundary holding enrolled participants' private keys. In Ethereum mode, it holds only the separate validator key; participant wallet keys stay in MetaMask. Protect that server and its trusted accounts file. Moving signing into separate organizational gateways would improve organizational independence.
 - Public traces deliberately expose recorded actor names, checkpoints, prices and certificate metadata. Use synthetic data for demonstrations. Real deployment requires a privacy and commercial-data policy.
 - All four peer organizations can read channel state. No private data collection or encrypted certificate store is implemented.
 - The network is a development topology: one orderer, development secrets, loopback enrollment CAs and host Docker socket access for chaincode builds. It is not a production network template.

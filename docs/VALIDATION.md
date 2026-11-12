@@ -1,8 +1,18 @@
 # Validation record
 
+## Live Ethereum validation — 12 November 2026
+
+- The Render service runs `LEDGER_MODE=ethereum` against Sepolia contract `0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43`.
+- The owner approved using one MetaMask test wallet for all six classroom role logins. Role separation is enforced by the API validator; this is not six independent organizations signing with separate keys.
+- The owner approved the first real harvest transaction for `AGR-DEMO-20261112-001`: `0xc8e4220198d572b6b54fb8f1ab83946542d190fbd9cb5c20d13cc6d7ea9dd7c0`, block 12117890.
+- The farmer-to-mandi transfer was mined in block 12117898: `0xa32b5f043d85131efaf7ae2d13c299cb5548e0448777f1baeb97be35b52b13f5`. The public trace read the updated holder and passed integrity validation.
+- An authenticated transfer request by the former farmer holder was rejected with HTTP 403 before wallet submission.
+- Four handovers through farmer, mandi, transporter, warehouse and retailer are confirmed on Sepolia. The retailer holds 99 kg after a recorded 1 kg handling loss. A manually entered simulated reading of 25 C and 94% humidity is preserved with `alert: true`; the retailer complaint is also confirmed. Seven committed snapshots and all seven inclusion proofs were independently checked. Recall and resolution acceptance checks are still awaiting owner wallet approval. No MQTT or physical sensor acquisition is claimed by this test.
+- A non-regulator recall request was rejected with HTTP 403. A desktop sidebar scrolling issue discovered during role switching was fixed and the production bundle rebuilt.
+
 ## Locally exercised
 
-- **18 automated tests pass**; the root dependency audit reports **zero known vulnerabilities** at initial delivery. solc's pinned temporary-file dependency is overridden to tmp 0.2.7 to include its upstream security fixes.
+- **20 automated tests passed in the latest local run**. The local-only Ganache development dependency has legacy transitive security advisories; do not describe the current dependency audit as clean. The pinned solc temporary-file override remains in place.
 - React production bundle builds successfully using Vite.
 - `BatchAnchor.sol` compiles with solc 0.8.38 using the Paris EVM target.
 - Node tests exercise batch registration, authorization, quantity/date/coordinate bounds, CA-derived Fabric roles, registered recipients, custody transfer, cold-chain alerts, certificate metadata validation, final recalls, complaint resolution, immutable event contents, projection tampering, canonical hashes and Merkle inclusion proofs.
@@ -22,7 +32,7 @@ The authoritative commands are `npm test`, `npm run build` and `npm run anchor:c
 
 - Docker/Fabric peer startup, CA enrollment, channel creation, endorsement and network restart. Docker and Fabric CLI were unavailable in the initial development environment.
 - Real Kubo pinning/public gateway retrieval and real MQTT broker delivery. Adapters and optional service configuration are supplied; their live services must be started separately.
-- EVM execution, MetaMask transactions or a deployed Sepolia anchor. Compilation is tested; no test ETH, wallet secret or deployed address was supplied.
+- The separate `BatchAnchor.sol` public Merkle-anchor contract remains unconfigured. The deployed `AgriTraceLedger` and owner-approved Sepolia transactions are documented above; they are a different architecture from Fabric plus a periodic public anchor.
 - Physical sensor acquisition or independent attestation of farm/certificate claims.
 - Throughput, multi-node fault tolerance, security audit or production deployment.
 
