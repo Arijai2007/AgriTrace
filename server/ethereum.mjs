@@ -65,10 +65,20 @@ export class EthereumLedger {
     const expected = batch ? keccak256(toUtf8Bytes(domain.canonical(batch))) : null;
     const filter = this.contract.filters.BatchCommitted(id(batchId));
     const latest = await this.provider.getBlockNumber();
+    if (!expected) {
+      for (let end = latest; end >= this.deploymentBlock;) {
+        const start = Math.max(this.deploymentBlock, end - 4999);
+        const logs = await this.contract.queryFilter(filter, start, end);
+        const log = logs.at(-1);
+        if (log) return { transactionHash: log.transactionHash, blockNumber: log.blockNumber, chainId: this.chainId, contract: this.contract.target };
+        end = start - 1;
+      }
+      return null;
+    }
     for (let start = this.deploymentBlock; start <= latest; start += 5000) {
       const end = Math.min(start + 4999, latest);
       const logs = await this.contract.queryFilter(filter, start, end);
-      const log = logs.find(l => !expected || l.args.digest === expected);
+      const log = logs.find(l => l.args.digest === expected);
       if (log) return { transactionHash: log.transactionHash, blockNumber: log.blockNumber, chainId: this.chainId, contract: this.contract.target };
     }
     return null;

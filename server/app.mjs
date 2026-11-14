@@ -39,7 +39,10 @@ export function createApp({ ledger, accounts, secret = randomBytes(48).toString(
   // Consumer read access is deliberately public. No unauthenticated write endpoint exists.
   app.get('/api/trace/:id', safe(async (req, res) => {
     const batch = await ledger.get(req.params.id);
-    res.json({ batch, verification: { valid: domain.verifyBatch(batch), root: batch.root, eventCount: batch.events.length, ledgerMode: ledger.mode, publicAnchor: false, ...(ledger.mode === 'ethereum' ? { blockchain: await ledger.evidence(batch.id, batch) } : {}) } });
+    // Log indexes can be temporarily unavailable even when the contract state is readable.
+    // Keep the verified consumer trace available and omit only the optional receipt link.
+    const blockchain = ledger.mode === 'ethereum' ? await ledger.evidence(batch.id, batch).catch(() => null) : undefined;
+    res.json({ batch, verification: { valid: domain.verifyBatch(batch), root: batch.root, eventCount: batch.events.length, ledgerMode: ledger.mode, publicAnchor: false, ...(ledger.mode === 'ethereum' ? { blockchain } : {}) } });
   }));
   app.get('/api/trace/:id/proof/:index', safe(async (req, res) => {
     const b = await ledger.get(req.params.id), index = Number(req.params.index);
