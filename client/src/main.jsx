@@ -7,9 +7,13 @@ import { Leaf, LayoutDashboard, Boxes, Route, Thermometer, ShieldCheck, ArrowUpR
 import 'leaflet/dist/leaflet.css';
 import '@fontsource-variable/manrope';
 import '@fontsource-variable/dm-sans';
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/plus-jakarta-sans';
 import { AnimatedNumber, JourneyVisual, LoadingScreen } from './components/visuals.jsx';
+import { LoginView } from './components/LoginView.jsx';
 import './styles.css';
 import './modern.css';
+import './stitch.css';
 
 const format = n => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(n);
 const date = d => new Date(d).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
@@ -66,9 +70,19 @@ function MapView({ events, origin }) {
 }
 function Login({ onLogin, health, notify }) {
   const [accounts, setAccounts] = useState([]), [id, setId] = useState('farmer-1'), [password, setPassword] = useState(''), [busy, setBusy] = useState(false);
-  useEffect(() => { if (['demo', 'ethereum'].includes(health?.ledgerMode)) api('/demo/accounts').then(setAccounts).catch(e => notify(e.message)); }, [health]);
-  const submit = async e => { e.preventDefault(); setBusy(true); try { const result = await api('/auth/login', { method: 'POST', body: { id, password } }); token = result.token; sessionStorage.setItem('agritrace-token', token); onLogin(result.user); } catch (err) { notify(err.message); } finally { setBusy(false); } };
-  return <div className="login-page"><div className="login-story"><a className="brand" href="/"><span className="brand-icon"><Leaf/></span>agri<span>trace</span><span className="brand-period">.</span></a><div className="story-content"><span className="eyebrow"><span className="status-spark"/> THE NEXT CHAPTER OF AGRICULTURE</span><h1>Good food.<br/>Clear origins.<br/><em>Better trust.</em></h1><p>A connected story from the people who grow your food to the people who bring it home.</p><JourneyVisual illustration/></div><div className="login-foot"><span>FROM THE SOIL. TO THE SHELF.</span><span><Leaf size={14}/> Built for a clearer food chain</span></div></div><div className="login-panel"><div className="login-panel-top"><span>GROW TOGETHER. TRACE TOGETHER.</span><a className="text-link" href="/trace">Consumer portal <ArrowUpRight size={15}/></a></div><div className="login-form"><WalletStatus health={health}/><span className="login-symbol"><Sprout size={30}/></span><div className="eyebrow">YOUR PLACE IN THE JOURNEY</div><h2>Welcome to<br/>your workspace.</h2><p className="muted">One harvest. Every hand. A shared record.</p><form onSubmit={submit}><Field label="Your account">{accounts.length ? <select value={id} onChange={e => setId(e.target.value)}>{accounts.map(a => <option value={a.id} key={a.id}>{a.name} · {labels[a.role]}</option>)}</select> : <input value={id} onChange={e => setId(e.target.value)} required autoComplete="username"/>}</Field><Field label="Password"><input type="password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" placeholder="Enter your password"/></Field><button className="button primary" disabled={busy}>{busy ? 'Opening your workspace…' : 'Enter workspace'}<ArrowUpRight size={18}/></button></form>{health?.ledgerMode === 'demo' && <div className="demo-note login-demo"><span className="demo-icon"><ShieldCheck size={18}/></span><div><strong>Take the demo for a spin</strong><p>Explore all six roles. Default password: <code>agritrace-demo</code> unless changed by your team. Demo records use a local file, not a distributed blockchain.</p></div></div>}<a className="consumer-preview-link" href="/trace/AGR-2026-001"><QrCode size={18}/><span>Just curious? Follow a harvest.</span><ArrowRight size={17}/></a></div><div className="login-panel-bottom"><span>AgriTrace · Agriculture with accountability</span><span>EST. 2026</span></div></div></div>;
+  useEffect(() => { if (['demo', 'ethereum'].includes(health?.ledgerMode)) api('/demo/accounts').then(setAccounts).catch(error => notify(error.message)); }, [health]);
+  const submit = async event => {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      const result = await api('/auth/login', { method: 'POST', body: { id, password } });
+      token = result.token;
+      sessionStorage.setItem('agritrace-token', token);
+      onLogin(result.user);
+    } catch (error) { notify(error.message); }
+    finally { setBusy(false); }
+  };
+  return <LoginView accounts={accounts} id={id} setId={setId} password={password} setPassword={setPassword} busy={busy} submit={submit} health={health}/>;
 }
 function BatchForm({ submit, busy }) {
   const [gps, setGps] = useState({ lat: '28.9845', lng: '77.7064' });
@@ -97,7 +111,7 @@ function ActionForm({ type, batch, participants, submit, busy, ipfsConfigured })
   </div><button className={`button ${type === 'recall' ? 'danger' : 'primary'}`} disabled={busy || (type === 'certificate' && !ipfsConfigured)}>{busy ? 'Recording…' : 'Record ' + (type === 'resolveComplaint' ? 'resolution' : type)}<ArrowRight size={16}/></button></form>;
 }
 function TraceDetail({ batch, verification, consumer = false, onAction, user, health, notify }) {
-  const [tab, setTab] = useState('Journey'), [showQR, setShowQR] = useState(false), [anchorResult, setAnchorResult] = useState(''), [anchorBusy, setAnchorBusy] = useState(false);
+  const [tab, setTab] = useState(() => consumer && new URLSearchParams(window.location.search).get('view') === 'verification' ? 'Verification' : 'Journey'), [showQR, setShowQR] = useState(false), [anchorResult, setAnchorResult] = useState(''), [anchorBusy, setAnchorBusy] = useState(false);
   const currentHolder = user?.id === batch.holder.id && batch.status === 'active';
   const url = `${window.location.origin}/trace/${encodeURIComponent(batch.id)}`;
   const temperatures = sensors(batch), prices = batch.events.filter(e => ['HARVEST', 'TRANSFER'].includes(e.type));
