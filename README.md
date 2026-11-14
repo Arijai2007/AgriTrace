@@ -110,4 +110,4 @@ docs/               Setup, API, architecture, validation and recommendations
 
 This is an academic prototype, not a certified food-safety service. Organic declarations and uploaded certificate issuer names are unverified claims; file hashing does not authenticate an issuer. Sensor values can be simulated and are not hardware-attested. Checkpoint lines are not live routes. Price differences are not net profit. Read the limitations in the architecture document before making claims about real-world trust or deployment readiness.
 
-No additional product features have been added beyond the synopsis. Future ideas are listed separately for approval. The supplied four-org Fabric setup has not been executed on a machine with Docker during initial development; IPFS, MQTT and Sepolia must be configured and validated before describing those services as live.
+The owner confirmed that the live Ethereum Sepolia implementation is the submission scope. Its test transactions are documented in [the validation record](docs/VALIDATION.md). The supplied four-org Fabric setup has not been run on a live network; IPFS and MQTT integrations have not been validated as live services.

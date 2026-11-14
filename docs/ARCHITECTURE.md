@@ -4,7 +4,7 @@
 
 The live Render service currently runs **Ethereum mode on Sepolia**, using `AgriTraceLedger.sol` as the record store. Participants submit MetaMask-signed transactions. The API validates agricultural business rules and signs wallet-bound approvals; Solidity validates those approvals and version ordering. This is a hybrid trust model, not independent on-chain enforcement of all agricultural rules.
 
-For the owner-approved classroom configuration, all six role logins share one test wallet. The API stores only its separate validator signing key; participant wallet keys remain in MetaMask. The Fabric mode described below is an alternative implementation whose live four-organization network is not yet validated. The original synopsis requires that Fabric architecture, so submission scope must be reconciled with the supervisor.
+For the owner-approved classroom configuration, all six role logins share one test wallet. The API stores only its separate validator signing key; participant wallet keys remain in MetaMask. The owner confirmed the live Ethereum implementation is the submission scope. The Fabric mode described below is an alternative prototype whose live four-organization network is not yet validated.
 
 The following diagram describes the **original Fabric target**, not the current Sepolia deployment.
 
