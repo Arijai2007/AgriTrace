@@ -64,12 +64,12 @@ export class EthereumLedger {
   async evidence(batchId, batch) {
     const expected = batch ? keccak256(toUtf8Bytes(domain.canonical(batch))) : null;
     const filter = this.contract.filters.BatchCommitted(id(batchId));
-    for (let end = await this.provider.getBlockNumber(); end >= this.deploymentBlock;) {
-      const start = Math.max(this.deploymentBlock, end - 4999);
+    const latest = await this.provider.getBlockNumber();
+    for (let start = this.deploymentBlock; start <= latest; start += 5000) {
+      const end = Math.min(start + 4999, latest);
       const logs = await this.contract.queryFilter(filter, start, end);
-      const log = logs.reverse().find(l => !expected || l.args.digest === expected);
+      const log = logs.find(l => !expected || l.args.digest === expected);
       if (log) return { transactionHash: log.transactionHash, blockNumber: log.blockNumber, chainId: this.chainId, contract: this.contract.target };
-      end = start - 1;
     }
     return null;
   }
