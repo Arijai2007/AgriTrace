@@ -26,10 +26,22 @@ export async function submitWalletTransaction(tx, api) {
 export function WalletStatus({ health }) {
   const [address, setAddress] = useState(''), [error, setError] = useState('');
   React.useEffect(() => {
-    const changed = () => setAddress('');
-    window.ethereum?.on?.('accountsChanged', changed); window.ethereum?.on?.('chainChanged', changed);
-    return () => { window.ethereum?.removeListener?.('accountsChanged', changed); window.ethereum?.removeListener?.('chainChanged', changed); };
-  }, []);
+    let cancelled = false, revision = 0;
+    const sync = async () => {
+      const current = ++revision;
+      try {
+        if (!window.ethereum || health?.ledgerMode !== 'ethereum') return;
+        const [accounts, chain] = await Promise.all([
+          window.ethereum.request({ method: 'eth_accounts' }),
+          window.ethereum.request({ method: 'eth_chainId' })
+        ]);
+        if (!cancelled && current === revision) setAddress(Number(chain) === health.ethereum.chainId ? accounts[0] || '' : '');
+      } catch { if (!cancelled && current === revision) setAddress(''); }
+    };
+    sync();
+    window.ethereum?.on?.('accountsChanged', sync); window.ethereum?.on?.('chainChanged', sync);
+    return () => { cancelled = true; window.ethereum?.removeListener?.('accountsChanged', sync); window.ethereum?.removeListener?.('chainChanged', sync); };
+  }, [health?.ledgerMode, health?.ethereum?.chainId]);
   const [hash, setHash] = useState(sessionStorage.getItem('agritrace-last-transaction'));
   React.useEffect(() => { const update = () => setHash(sessionStorage.getItem('agritrace-last-transaction')); window.addEventListener('agritrace-transaction', update); return () => window.removeEventListener('agritrace-transaction', update); }, []);
   if (health?.ledgerMode !== 'ethereum') return null;

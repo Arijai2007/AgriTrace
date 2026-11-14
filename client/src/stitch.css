@@ -131,6 +131,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .sidebar-bottom .trace-callout, .sidebar-bottom .network-state { display: none; }
 .sidebar-bottom .demo-note { padding: 0; margin: 0; border: 0; background: none; }
 .sidebar-bottom .demo-note strong, .sidebar-bottom .demo-note p { display: none; }
+.sidebar-bottom .demo-note p[role="status"]:not(:empty) { display: block; position: absolute; top: 100%; right: 12px; width: min(320px, calc(100vw - 24px)); padding: 12px; background: #fff; color: #9e2724; border: 1px solid #efcfcb; border-radius: 5px; box-shadow: 0 4px 16px #173d2d20; overflow-wrap: anywhere; }
 .sidebar-bottom .demo-note .button { min-height: 32px; padding: 7px 9px; background: #173d2d; border-color: #173d2d; color: #fff; font-size: 9px; max-width: 132px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sidebar-bottom .profile { width: auto; min-height: 0; margin: 0; padding: 0; gap: 7px; background: none; border: 0; color: #173d2d; }
 .sidebar-bottom .profile:hover { background: none; }
