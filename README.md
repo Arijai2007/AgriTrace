@@ -7,6 +7,8 @@
 
 **Live network: Ethereum Sepolia.** Contract: [`0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43`](https://sepolia.etherscan.io/address/0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43). All six classroom role logins are bound to one owner-controlled test wallet. The API validator remains trusted for business-rule approvals. Live batches start empty; local seeded examples are not migrated to the chain.
 
+**Verified classroom batch:** [public QR trace](https://agritrace-5ldg.onrender.com/trace/AGR-DEMO-20261112-001) · [nine Sepolia receipts and inclusion proofs](docs/evidence/sepolia-demo.json) · [validation notes](docs/VALIDATION.md). The batch is synthetic and intentionally recalled to demonstrate regulator controls.
+
 **Every harvest has a story.** Farm-to-shelf agricultural traceability with role-controlled custody, cold-chain evidence, consumer QR journeys, and regulator audits.
 
 AgriTrace is an original implementation based on the supplied project synopsis. The three reference repositories informed the review of participant roles, custody and sensor tracking; this is not a renamed pharmaceutical application. See [REFERENCES.md](docs/REFERENCES.md).

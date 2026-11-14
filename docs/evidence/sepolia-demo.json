@@ -1,0 +1,463 @@
+{
+  "checkedAt": "2026-11-14T21:01:37.645Z",
+  "batchTrace": {
+    "batch": {
+      "certificates": [],
+      "complaints": [
+        {
+          "id": "f6614d8b-4d6f-43bc-aa9f-96819b42c6e2",
+          "message": "Classroom demonstration complaint: recorded simulated transport reading of 25 C and 94% humidity exceeded the batch limits. Request regulator review; no real produce is involved.",
+          "resolution": "Classroom audit completed: simulated sensor excursion and complete custody history verified. Complaint resolved after review. Synthetic batch remains recalled; no real food safety claim is made.",
+          "status": "resolved"
+        }
+      ],
+      "createdAt": "2026-11-12T09:12:27.909Z",
+      "crop": "Classroom demo tomatoes",
+      "events": [
+        {
+          "actor": {
+            "id": "farmer-1",
+            "name": "Kavita Sharma",
+            "role": "farmer"
+          },
+          "data": {
+            "crop": "Classroom demo tomatoes",
+            "harvestDate": "2026-11-12",
+            "limits": {
+              "maxHumidity": 90,
+              "maxTemp": 15,
+              "minTemp": 2
+            },
+            "location": {
+              "lat": 28.9845,
+              "lng": 77.7064,
+              "name": "Classroom demo farm, Meerut"
+            },
+            "organic": false,
+            "price": 24,
+            "quantity": 100,
+            "unit": "kg"
+          },
+          "index": 0,
+          "previousHash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "timestamp": "2026-11-12T09:12:27.909Z",
+          "txId": "78a55e47-5be9-4272-89e7-816fb130dfde",
+          "type": "HARVEST"
+        },
+        {
+          "actor": {
+            "id": "farmer-1",
+            "name": "Kavita Sharma",
+            "role": "farmer"
+          },
+          "data": {
+            "from": {
+              "id": "farmer-1",
+              "name": "Kavita Sharma",
+              "role": "farmer"
+            },
+            "grade": "A",
+            "location": {
+              "lat": 28.7041,
+              "lng": 77.1808,
+              "name": "Classroom demo mandi, Delhi"
+            },
+            "note": "Classroom demonstration: farmer hands 100 kg to the mandi agent.",
+            "price": 29,
+            "quantity": 100,
+            "to": {
+              "id": "aggregator-1",
+              "name": "Arjun Mehta",
+              "role": "aggregator"
+            }
+          },
+          "index": 1,
+          "previousHash": "c05b9f5fad9155288d7194af52507145567f9ff3970a39bb9a5e91041d3c27ce",
+          "timestamp": "2026-11-12T09:15:58.886Z",
+          "txId": "523f9c99-173b-4cd9-b67a-1a9aa832f012",
+          "type": "TRANSFER"
+        },
+        {
+          "actor": {
+            "id": "aggregator-1",
+            "name": "Arjun Mehta",
+            "role": "aggregator"
+          },
+          "data": {
+            "from": {
+              "id": "aggregator-1",
+              "name": "Arjun Mehta",
+              "role": "aggregator"
+            },
+            "grade": "A",
+            "location": {
+              "lat": 28.7041,
+              "lng": 77.1808,
+              "name": "Classroom demo mandi, Delhi"
+            },
+            "note": "Classroom demonstration: 1 kg handling loss; 99 kg dispatched to transporter.",
+            "price": 33,
+            "quantity": 99,
+            "to": {
+              "id": "transporter-1",
+              "name": "Ravi Singh",
+              "role": "transporter"
+            }
+          },
+          "index": 2,
+          "previousHash": "ea2d1c828e1f74c5df37c13b3c3d0c77d9482b6eda874e10dae4861a7335fc9e",
+          "timestamp": "2026-11-12T09:19:25.195Z",
+          "txId": "526c731d-8700-46fd-be14-b4853500a3b9",
+          "type": "TRANSFER"
+        },
+        {
+          "actor": {
+            "id": "transporter-1",
+            "name": "Ravi Singh",
+            "role": "transporter"
+          },
+          "data": {
+            "alert": true,
+            "deviceId": "SIM-TRUCK-CLASSROOM-01",
+            "humidity": 94,
+            "location": {
+              "lat": 28.5355,
+              "lng": 77.391,
+              "name": "Classroom demo transit checkpoint, Noida"
+            },
+            "temperature": 25
+          },
+          "index": 3,
+          "previousHash": "c815f41e870d6fc0cb1f2b246854f6a9650193fb8ab527627634da22778b1ea8",
+          "timestamp": "2026-11-12T09:22:04.664Z",
+          "txId": "1cde0c81-1b9d-4028-b5a7-84590559b1e8",
+          "type": "SENSOR"
+        },
+        {
+          "actor": {
+            "id": "transporter-1",
+            "name": "Ravi Singh",
+            "role": "transporter"
+          },
+          "data": {
+            "from": {
+              "id": "transporter-1",
+              "name": "Ravi Singh",
+              "role": "transporter"
+            },
+            "grade": "A",
+            "location": {
+              "lat": 28.5355,
+              "lng": 77.391,
+              "name": "Classroom demo cold storage, Noida"
+            },
+            "note": "Classroom demonstration: warehouse receives 99 kg; recorded transport excursion remains in history.",
+            "price": 38,
+            "quantity": 99,
+            "to": {
+              "id": "processor-1",
+              "name": "Neha Verma",
+              "role": "processor"
+            }
+          },
+          "index": 4,
+          "previousHash": "3fff7620cc135dab15e2a0c01d4672b5f39ae76920d927845ec8bf6db3e04d15",
+          "timestamp": "2026-11-12T09:23:30.001Z",
+          "txId": "f70cf89f-1fc4-4fdc-b5ad-faf77c191a21",
+          "type": "TRANSFER"
+        },
+        {
+          "actor": {
+            "id": "processor-1",
+            "name": "Neha Verma",
+            "role": "processor"
+          },
+          "data": {
+            "from": {
+              "id": "processor-1",
+              "name": "Neha Verma",
+              "role": "processor"
+            },
+            "grade": "A",
+            "location": {
+              "lat": 28.5355,
+              "lng": 77.391,
+              "name": "Classroom demo retail shop, Noida"
+            },
+            "note": "Classroom demonstration: 99 kg delivered to retailer; history includes transport excursion.",
+            "price": 45,
+            "quantity": 99,
+            "to": {
+              "id": "retailer-1",
+              "name": "Aditi Rao",
+              "role": "retailer"
+            }
+          },
+          "index": 5,
+          "previousHash": "b0f97097224a2484a1dec5850744551d321369c0025f0161ce70da4d4175ad08",
+          "timestamp": "2026-11-12T09:24:54.629Z",
+          "txId": "cb1c727a-46b3-4567-a51d-1b42c3a50df2",
+          "type": "TRANSFER"
+        },
+        {
+          "actor": {
+            "id": "retailer-1",
+            "name": "Aditi Rao",
+            "role": "retailer"
+          },
+          "data": {
+            "id": "f6614d8b-4d6f-43bc-aa9f-96819b42c6e2",
+            "message": "Classroom demonstration complaint: recorded simulated transport reading of 25 C and 94% humidity exceeded the batch limits. Request regulator review; no real produce is involved.",
+            "status": "open"
+          },
+          "index": 6,
+          "previousHash": "cb34ed5d6d1b7bf16aa52d642fcc1958810909f76003e233edb43be1787a6bec",
+          "timestamp": "2026-11-12T09:26:22.898Z",
+          "txId": "f6614d8b-4d6f-43bc-aa9f-96819b42c6e2",
+          "type": "COMPLAINT"
+        },
+        {
+          "actor": {
+            "id": "regulator-1",
+            "name": "Vikram Gupta",
+            "role": "regulator"
+          },
+          "data": {
+            "reason": "Classroom demonstration recall: simulated 25 C / 94% humidity transport excursion. Hold this synthetic batch to test recall enforcement; no real produce or incident is involved."
+          },
+          "index": 7,
+          "previousHash": "95540af32a52f12603ad7aaf60eaddef0bb55f35aa8365bfc92b2624300bf168",
+          "timestamp": "2026-11-12T09:28:13.419Z",
+          "txId": "433bca34-7251-4b31-8681-c4ad84b5763f",
+          "type": "RECALL"
+        },
+        {
+          "actor": {
+            "id": "regulator-1",
+            "name": "Vikram Gupta",
+            "role": "regulator"
+          },
+          "data": {
+            "id": "f6614d8b-4d6f-43bc-aa9f-96819b42c6e2",
+            "message": "Classroom demonstration complaint: recorded simulated transport reading of 25 C and 94% humidity exceeded the batch limits. Request regulator review; no real produce is involved.",
+            "resolution": "Classroom audit completed: simulated sensor excursion and complete custody history verified. Complaint resolved after review. Synthetic batch remains recalled; no real food safety claim is made.",
+            "status": "resolved"
+          },
+          "index": 8,
+          "previousHash": "a67f014c5e18b84f0b68653c136ca40ce7416cdaa0d270fa635337f438f4e6af",
+          "timestamp": "2026-11-12T09:32:17.076Z",
+          "txId": "0178ae38-e439-43ee-8aa9-9cf0a69533b0",
+          "type": "COMPLAINT_RESOLVED"
+        }
+      ],
+      "harvestDate": "2026-11-12",
+      "holder": {
+        "id": "retailer-1",
+        "name": "Aditi Rao",
+        "role": "retailer"
+      },
+      "id": "AGR-DEMO-20261112-001",
+      "limits": {
+        "maxHumidity": 90,
+        "maxTemp": 15,
+        "minTemp": 2
+      },
+      "organic": false,
+      "origin": {
+        "lat": 28.9845,
+        "lng": 77.7064,
+        "name": "Classroom demo farm, Meerut"
+      },
+      "quantity": 99,
+      "recallReason": "Classroom demonstration recall: simulated 25 C / 94% humidity transport excursion. Hold this synthetic batch to test recall enforcement; no real produce or incident is involved.",
+      "root": "01b807b118147fe9395e8c0e6998249f01161a217211d3846474b843ff90dfe9",
+      "status": "recalled",
+      "unit": "kg",
+      "updatedAt": "2026-11-12T09:32:17.076Z"
+    },
+    "verification": {
+      "valid": true,
+      "root": "01b807b118147fe9395e8c0e6998249f01161a217211d3846474b843ff90dfe9",
+      "eventCount": 9,
+      "ledgerMode": "ethereum",
+      "publicAnchor": false,
+      "blockchain": null
+    }
+  },
+  "publicTraceHttpStatus": 200,
+  "transactions": [
+    {
+      "eventCount": 1,
+      "type": "HARVEST",
+      "actor": "Kavita Sharma",
+      "role": "farmer",
+      "transactionHash": "0xc8e4220198d572b6b54fb8f1ab83946542d190fbd9cb5c20d13cc6d7ea9dd7c0",
+      "block": 12117890,
+      "gasUsed": "4226462",
+      "feeTestEth": "0.006339693076076316",
+      "requestToBlockSeconds": 140,
+      "url": "https://sepolia.etherscan.io/tx/0xc8e4220198d572b6b54fb8f1ab83946542d190fbd9cb5c20d13cc6d7ea9dd7c0"
+    },
+    {
+      "eventCount": 2,
+      "type": "TRANSFER",
+      "actor": "Kavita Sharma",
+      "role": "farmer",
+      "transactionHash": "0xa32b5f043d85131efaf7ae2d13c299cb5548e0448777f1baeb97be35b52b13f5",
+      "block": 12117898,
+      "gasUsed": "2283166",
+      "feeTestEth": "0.003424749043380154",
+      "requestToBlockSeconds": 25,
+      "url": "https://sepolia.etherscan.io/tx/0xa32b5f043d85131efaf7ae2d13c299cb5548e0448777f1baeb97be35b52b13f5"
+    },
+    {
+      "eventCount": 3,
+      "type": "TRANSFER",
+      "actor": "Arjun Mehta",
+      "role": "aggregator",
+      "transactionHash": "0x9f81a65d3d78e5e524af8c131281185443a73300814064fde24d12f97debbe05",
+      "block": 12117918,
+      "gasUsed": "2542915",
+      "feeTestEth": "0.003814372553401215",
+      "requestToBlockSeconds": 59,
+      "url": "https://sepolia.etherscan.io/tx/0x9f81a65d3d78e5e524af8c131281185443a73300814064fde24d12f97debbe05"
+    },
+    {
+      "eventCount": 4,
+      "type": "SENSOR",
+      "actor": "Ravi Singh",
+      "role": "transporter",
+      "transactionHash": "0xa27077189001a1e1db31daa6d5fea6a177dd2dd3c8b047402176121c8e50a7c3",
+      "block": 12117929,
+      "gasUsed": "1943302",
+      "feeTestEth": "0.002914953046639248",
+      "requestToBlockSeconds": 31,
+      "url": "https://sepolia.etherscan.io/tx/0xa27077189001a1e1db31daa6d5fea6a177dd2dd3c8b047402176121c8e50a7c3"
+    },
+    {
+      "eventCount": 5,
+      "type": "TRANSFER",
+      "actor": "Ravi Singh",
+      "role": "transporter",
+      "transactionHash": "0x0b55603792983f9db9df313a3eeed79f0b7fd0e3fb5ba3183416e3174a85053b",
+      "block": 12117935,
+      "gasUsed": "2645010",
+      "feeTestEth": "0.00396751506612525",
+      "requestToBlockSeconds": 18,
+      "url": "https://sepolia.etherscan.io/tx/0x0b55603792983f9db9df313a3eeed79f0b7fd0e3fb5ba3183416e3174a85053b"
+    },
+    {
+      "eventCount": 6,
+      "type": "TRANSFER",
+      "actor": "Neha Verma",
+      "role": "processor",
+      "transactionHash": "0xa79123644382eeb0e613e39139a36aa60f84b14d6e37fd9a9c7837e3e10867a7",
+      "block": 12117942,
+      "gasUsed": "2588738",
+      "feeTestEth": "0.003883107059540974",
+      "requestToBlockSeconds": 17,
+      "url": "https://sepolia.etherscan.io/tx/0xa79123644382eeb0e613e39139a36aa60f84b14d6e37fd9a9c7837e3e10867a7"
+    },
+    {
+      "eventCount": 7,
+      "type": "COMPLAINT",
+      "actor": "Aditi Rao",
+      "role": "retailer",
+      "transactionHash": "0x01016c8325b35579327af15ad19a4614291e31ced45cc567c2e3efab06b982fe",
+      "block": 12117950,
+      "gasUsed": "4283427",
+      "feeTestEth": "0.006425140594235394",
+      "requestToBlockSeconds": 25,
+      "url": "https://sepolia.etherscan.io/tx/0x01016c8325b35579327af15ad19a4614291e31ced45cc567c2e3efab06b982fe"
+    },
+    {
+      "eventCount": 8,
+      "type": "RECALL",
+      "actor": "Vikram Gupta",
+      "role": "regulator",
+      "transactionHash": "0xdcd8a5f3071153821a2b7677f281f5816342ebe919735712f68cbc5c60d64f7f",
+      "block": 12117971,
+      "gasUsed": "2916437",
+      "feeTestEth": "0.004374655567078051",
+      "requestToBlockSeconds": 167,
+      "url": "https://sepolia.etherscan.io/tx/0xdcd8a5f3071153821a2b7677f281f5816342ebe919735712f68cbc5c60d64f7f"
+    },
+    {
+      "eventCount": 9,
+      "type": "COMPLAINT_RESOLVED",
+      "actor": "Vikram Gupta",
+      "role": "regulator",
+      "transactionHash": "0x871495a10d77a1770b1ff3d281e1c7679e12026cadca45f8c13eca769828884d",
+      "block": 12117979,
+      "gasUsed": "5449082",
+      "feeTestEth": "0.008173623130777968",
+      "requestToBlockSeconds": 19,
+      "url": "https://sepolia.etherscan.io/tx/0x871495a10d77a1770b1ff3d281e1c7679e12026cadca45f8c13eca769828884d"
+    }
+  ],
+  "proofs": [
+    {
+      "index": 0,
+      "valid": true
+    },
+    {
+      "index": 1,
+      "valid": true
+    },
+    {
+      "index": 2,
+      "valid": true
+    },
+    {
+      "index": 3,
+      "valid": true
+    },
+    {
+      "index": 4,
+      "valid": true
+    },
+    {
+      "index": 5,
+      "valid": true
+    },
+    {
+      "index": 6,
+      "valid": true
+    },
+    {
+      "index": 7,
+      "valid": true
+    },
+    {
+      "index": 8,
+      "valid": true
+    }
+  ],
+  "totalBatchFeesTestEth": "0.04331780913725457",
+  "measurementNote": "Request-to-block elapsed time includes human MetaMask approval; it is not a pure network latency benchmark.",
+  "negativeChecks": [
+    {
+      "check": "Former holder cannot transfer after handover",
+      "httpStatus": 403,
+      "result": "passed"
+    },
+    {
+      "check": "Non-regulator cannot recall",
+      "httpStatus": 403,
+      "result": "passed"
+    },
+    {
+      "check": "Recalled batch rejects transfer",
+      "httpStatus": 400,
+      "result": "passed",
+      "message": "Recalled batches cannot be modified or transferred"
+    },
+    {
+      "check": "Recalled batch rejects sensor",
+      "httpStatus": 400,
+      "result": "passed",
+      "message": "Recalled batches cannot be modified or transferred"
+    }
+  ],
+  "scope": "Owner-approved single-wallet classroom test on Sepolia. Manual simulated sensor data; no physical hardware, IPFS or MQTT delivery claimed."
+}
