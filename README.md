@@ -1,29 +1,47 @@
 # AgriTrace
 
-**New: real Ethereum ledger with MetaMask transactions.** Run `npm run blockchain`, then `npm run build` and `npm run start:ethereum` in a second terminal. Follow [the Ethereum setup guide](docs/ETHEREUM.md). The live Render service now uses Ethereum Sepolia. The default Render Blueprint below remains an alternative file-backed demo template; do not sync its demo settings over the configured live service.
+**Every harvest has a story.** Farm-to-shelf agricultural traceability with MetaMask transactions, role-controlled custody, cold-chain records, consumer QR journeys and regulator audits.
 
+**Live website:** [agri-trace-psi.vercel.app](https://agri-trace-psi.vercel.app/)
 
-**Live app:** [https://agritrace-5ldg.onrender.com](https://agritrace-5ldg.onrender.com)
+**Backend:** [Render API health](https://agritrace-5ldg.onrender.com/api/health)
 
-**Live network: Ethereum Sepolia.** Contract: [`0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43`](https://sepolia.etherscan.io/address/0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43). All six classroom role logins are bound to one owner-controlled test wallet. The API validator remains trusted for business-rule approvals. Live batches start empty; local seeded examples are not migrated to the chain.
+**Repository:** [Arijai2007/AgriTrace](https://github.com/Arijai2007/AgriTrace)
 
-**Verified classroom batch:** [public QR trace](https://agritrace-5ldg.onrender.com/trace/AGR-DEMO-20261112-001) · [nine Sepolia receipts and inclusion proofs](docs/evidence/sepolia-demo.json) · [validation notes](docs/VALIDATION.md). The batch is synthetic and intentionally recalled to demonstrate regulator controls.
+## Live deployment
 
-**Every harvest has a story.** Farm-to-shelf agricultural traceability with role-controlled custody, cold-chain evidence, consumer QR journeys, and regulator audits.
+The React/Vite frontend runs on **Vercel**, and the Express backend runs on **Render**. The frontend forwards `/api/*` requests to Render using the rewrites in `vercel.json`. Authentication, public trace reads and transaction preparation use this API; MetaMask signs blockchain updates.
 
-AgriTrace is an original implementation based on the supplied project synopsis. The three reference repositories informed the review of participant roles, custody and sensor tracking; this is not a renamed pharmaceutical application. See [REFERENCES.md](docs/REFERENCES.md).
+Vercel is connected to this repository: pushes to `main` automatically build and deploy the frontend. Check the Vercel deployment status before expecting a pushed change to appear on the production URL. Backend code changes require a Render deployment; its repository connection and auto-deploy settings are managed separately.
 
-## Deploy the college demo
+Keep server secrets, including the API validator key, on Render. The frontend needs no private wallet key. See [Vercel frontend and Render backend setup](docs/VERCEL.md).
 
-**Recommended: one Render web service for both the website and API.** The included free-plan Blueprint builds the app, loads sample batches on first startup, and provides one HTTPS URL for sign-in and consumer QR links.
+The live ledger uses **Ethereum Sepolia**. Contract: [`0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43`](https://sepolia.etherscan.io/address/0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43). All six classroom role logins are bound to one owner-controlled test wallet. The API validator remains trusted for business-rule approvals; Sepolia validators confirm the transactions. Hosted Sepolia use does not require Ganache. Ganache is available for the local Ethereum workflow in [the Ethereum setup guide](docs/ETHEREUM.md).
+
+Sepolia transactions use test ETH. On-chain records survive application restarts; the free Render backend may take time to wake before the first API request completes.
+
+**Verified classroom batch:** [public batch journey](https://agri-trace-psi.vercel.app/trace/AGR-DEMO-20261112-001) · [verification view](https://agri-trace-psi.vercel.app/trace/AGR-DEMO-20261112-001?view=verification) · [nine Sepolia receipts and inclusion proofs](docs/evidence/sepolia-demo.json). This synthetic batch is intentionally recalled to demonstrate regulator controls. See [validation notes](docs/VALIDATION.md).
+
+## Website navigation
+
+- **Overview:** entrance page with participant sign-in, interactive five-stage custody route and project overview.
+- **Batch Journey:** complete public history of the classroom sample batch.
+- **Consumer Trace:** public sample trace; the **Consumer portal** opens the batch-ID lookup.
+- **Verification:** integrity information for the sample batch.
+- **Partner workspace:** sign in using one of the six registered role accounts. Connect MetaMask on Sepolia to submit batch updates.
+- **Sign out:** click the profile/name and exit arrow in the workspace header; on mobile, use the initials and exit arrow.
+
+The responsive interface follows the supplied Stitch design, including ivory surfaces, forest-green controls, editorial typography and an agricultural image section. The route shows recorded batch data; its animation is a visual aid, not live GPS or sensor streaming.
+
+## Alternative local demo deployment
+
+The included `render.yaml` is a **file-backed demonstration template**. Do not sync its demo environment settings over the configured live Sepolia backend.
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Arijai2007/AgriTrace)
 
-Choose a demo password when Render prompts for `DEMO_PASSWORD`; use it for all six demonstration accounts. No wallet key is needed. This deployment runs the explicitly labelled **demo ledger**, not a live Fabric network.
+For this alternative deployment, choose a `DEMO_PASSWORD` for the six accounts. Local JSON demo records can reset when ephemeral hosting storage is replaced; this limitation does not apply to the Sepolia contract history. See [the Render demo guide](docs/DEPLOYMENT.md).
 
-**Free-hosting limitation:** records reset when Render restarts, redeploys or spins down; the sample batches are seeded again. Keep your viva's custom batch flow within one session, open the app beforehand to allow startup, and keep a local copy as a backup. Persistent demo records require a paid disk or a separately configured database. The Blueprint creates no paid resources. See [the full Render deployment guide](docs/DEPLOYMENT.md).
-
-## Run the project
+## Run the local file-backed demo
 
 Install **Node.js 22 or 24 LTS**. In this directory:
 
@@ -38,14 +56,15 @@ Open **http://127.0.0.1:4000**. Select any demo account and enter **`agritrace-d
 
 For development, use `npm run dev` and open the Vite URL (normally http://127.0.0.1:5173). The API runs on port 4000. Run commands from the repository root; a single root lockfile installs the web, API, and test dependencies without requiring Windows directory links.
 
-### Two explicit ledger modes
+### Three explicit ledger modes
 
 | Mode | What runs | What it proves |
 |---|---|---|
 | `demo` (default) | Local JSON persistence, the same domain rules used by chaincode, JWT accounts | Role/custody workflow, hash-chain consistency, Merkle inclusion, cold-chain exceptions. **Not distributed consensus or independent immutability.** |
+| `ethereum` | Solidity ledger, registered wallets, MetaMask and an API approval signer | Mined transactions, on-chain event history, wallet authorization and replay protection. Used by the live Sepolia deployment. |
 | `fabric` | Fabric Gateway, CA-enrolled X.509 identities, Node chaincode, four peer organizations, Raft ordering, CouchDB | Signed transactions and chaincode enforcement on the configured Fabric network. Requires Docker and Fabric binaries. |
 
-The demo is deliberately labelled in the UI. It never silently falls back from Fabric to local records. Demo credentials and seeded names/readings are for classroom use only.
+The demo is deliberately labelled in the UI. A blockchain connection failure does not silently switch the app to local records. Demo credentials and seeded names/readings are for classroom use only.
 
 ## Included functionality
 
@@ -57,7 +76,7 @@ The demo is deliberately labelled in the UI. It never silently falls back from F
 - Regulator workspace: audit register, complaints and resolutions, targeted recalls; recalled batches are blocked from further custody/condition/certificate changes.
 - Integrity: canonical SHA-256 event hashing, previous-event links, Merkle roots and per-event inclusion proofs; exported trace data.
 - Public anchoring: `BatchAnchor.sol`, compiler/deployment scripts, authorized wallet publishers, immutable versioned commitments, and MetaMask verification/publishing on Sepolia.
-- Responsive React interface, PWA manifest, accessible forms/dialogs, API validation, password hashing, expiring JWTs and request rate limits.
+- Stitch-styled responsive React interface with interactive custody stages, overview imagery and mobile navigation, PWA manifest, accessible forms/dialogs, API validation, password hashing, expiring JWTs and request rate limits.
 
 The PWA manifest supports a standalone presentation on compatible browsers. There is no offline transaction queue or offline ledger: network connectivity is required.
 
@@ -71,12 +90,14 @@ The PWA manifest supports a standalone presentation on compatible browsers. Ther
 6. Open **Batch QR** and follow its public consumer URL. A phone needs a hosted/LAN address it can reach; localhost on a QR refers to the scanning device itself.
 7. Sign in as **Vikram Gupta · Regulator** to review a reported issue, resolve it or recall that batch. The public trace now displays the recall.
 
-Seeded batch `AGR-2026-001` is already in Ravi’s custody; `AGR-2026-002` is at the retailer; `AGR-2026-003` has a cold-chain excursion and open complaint.
+In the local file-backed demo, seeded batch `AGR-2026-001` is already in Ravi’s custody; `AGR-2026-002` is at the retailer; `AGR-2026-003` has a cold-chain excursion and open complaint.
 
 ## External integrations
 
 Copy `.env.example` to `.env` for local configuration. `.env`, keys, enrollment materials, runtime ledgers and generated builds are excluded from Git.
 
+- [Ethereum ledger and MetaMask setup](docs/ETHEREUM.md)
+- [Vercel frontend and Render API routing](docs/VERCEL.md)
 - [Fabric setup and four-organization network](docs/FABRIC.md)
 - [Render deployment and viva checklist](docs/DEPLOYMENT.md)
 - [IPFS, MQTT, Sepolia and wallet setup](docs/INTEGRATIONS.md)
@@ -90,6 +111,7 @@ Copy `.env.example` to `.env` for local configuration. `.env`, keys, enrollment 
 ```sh
 npm test
 npm run build
+npm run smoke
 npm run anchor:compile
 ```
 
@@ -99,13 +121,15 @@ The tests cover domain authorization, invalid input, recalls, certificate metada
 
 ```text
 client/             React/Vite portal and public consumer view
-server/             Express API, authentication, demo ledger and Fabric Gateway
+server/             Express API, authentication, Ethereum ledger, demo ledger and Fabric Gateway
 chaincode/          Node Fabric contract and shared deterministic domain rules
-contracts/          Solidity public snapshot anchor
+contracts/          Solidity Ethereum ledger and public snapshot anchor
 infra/              Four-org Fabric generator, CA enrollment, deployment and optional services
 scripts/            Sensors, MQTT oracle, Solidity compilation/deployment
 tests/              Node test-runner domain, contract and HTTP tests
 docs/               Setup, API, architecture, validation and recommendations
+vercel.json         Frontend build and Render API rewrites
+render.yaml         Alternative file-backed Render demo template
 ```
 
 ## Prototype boundaries
