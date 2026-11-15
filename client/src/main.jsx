@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import '@fontsource-variable/manrope';
 import '@fontsource-variable/dm-sans';
 import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/wght-italic.css';
 import '@fontsource-variable/plus-jakarta-sans';
 import { AnimatedNumber, JourneyVisual, LoadingScreen } from './components/visuals.jsx';
 import { LoginView } from './components/LoginView.jsx';
