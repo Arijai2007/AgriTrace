@@ -19,6 +19,7 @@ import './styles.css';
 import './modern.css';
 import './stitch.css';
 import './blockchain-tools.css';
+import './polish.css';
 
 const format = n => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(n);
 const date = d => new Date(d).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
