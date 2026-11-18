@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserProvider } from 'ethers';
+import { trackWalletTransaction } from './transactionFlow.mjs';
+import { saveTransaction } from './transactionModel.mjs';
 export async function connectWallet(chainId) {
   if (!window.ethereum) throw new Error('Install MetaMask to connect your wallet.');
   await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -13,15 +15,11 @@ export async function connectWallet(chainId) {
   if (Number((await provider.getNetwork()).chainId) !== chainId) throw new Error('Select the configured blockchain in MetaMask.');
   return provider;
 }
-export async function submitWalletTransaction(tx, api) {
-  const provider = await connectWallet(tx.chainId), signer = await provider.getSigner();
-  if ((await signer.getAddress()).toLowerCase() !== tx.from.toLowerCase()) throw new Error('Switch MetaMask to the registered wallet: ' + tx.from);
-  const sent = await signer.sendTransaction({ to: tx.to, data: tx.data });
-  sessionStorage.setItem('agritrace-last-transaction', sent.hash);
-  window.dispatchEvent(new Event('agritrace-transaction'));
-  const receipt = await sent.wait();
-  if (receipt.status !== 1) throw new Error('Blockchain transaction failed.');
-  return api('/transactions/' + sent.hash);
+export async function submitWalletTransaction(tx, api, operation) {
+  return trackWalletTransaction(tx, { connect: connectWallet, api, operation, save: record => {
+    if (record.hash) { try { sessionStorage.setItem('agritrace-last-transaction', record.hash); } catch { /* Optional browser convenience. */ } }
+    saveTransaction(record);
+  } });
 }
 export function WalletStatus({ health }) {
   const [address, setAddress] = useState(''), [error, setError] = useState('');

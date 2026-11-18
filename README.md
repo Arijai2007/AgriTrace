@@ -14,6 +14,16 @@ To submit updates on the hosted site, sign in with a registered participant acco
 
 The free Render API can take time to wake. Sepolia records are stored on-chain and survive application restarts.
 
+## Transaction details, performance and tamper demonstration
+
+- **Transaction status:** a wallet update opens a status panel showing approval, pending confirmation, confirmation, rejection or revert. Expand it for the actual transaction hash, block, gas used, fee and explorer link. A receipt-check interruption stays pending until checked again; a rejected wallet prompt is not a blockchain transaction.
+- **Performance:** sign in and open **Performance**, or open the public batch's **Performance** tab. The dashboard groups gas usage and observed confirmation times by operation and exports the measurements as JSON. Use **Inspect receipt** to look up an older AgriTrace hash; the lookup reads the configured chain and checks the destination contract.
+- **Tamper detection:** open a batch's **Verification** tab and find **Change a copy. Check the proof.** Select an event, simulate an edit or import edited JSON, then restore the original. The browser checks a SHA-256 Merkle proof against the loaded batch root. An uploaded root cannot replace that reference, and the demonstration never writes to the ledger.
+
+Try the [sample batch performance view](https://agri-trace-psi.vercel.app/trace/AGR-DEMO-20261112-001?view=performance). To inspect an existing receipt without submitting a transaction, use `0x871495a10d77a1770b1ff3d281e1c7679e12026cadca45f8c13eca769828884d` from the classroom demonstration.
+
+Measurements are stored in this browser, scoped to the chain and contract, with at most 100 attempts retained. Confirmation time is measured from the wallet returning a hash until the active tab observes a mined receipt; it includes RPC/polling delay and excludes time spent approving in MetaMask. Imported or recovered receipts show **Not measured** for historical timing. Gas fees are calculated from receipt gas used and effective gas price; recorded reverted transactions can still incur fees. These samples are not a network throughput benchmark.
+
 ## Ledger modes
 
 | `LEDGER_MODE` | Storage and authorization | Use |
