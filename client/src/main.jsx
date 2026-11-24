@@ -1,5 +1,5 @@
 import { batchLabel, sampleText, tracePath, featuredBatchId, SEPOLIA_SAMPLE_ID } from './sampleBatch.mjs';
-import { readApiResponse } from './apiResponse.mjs';
+import { readApiResponse, retryStartupRead } from './apiResponse.mjs';
 import { WalletStatus, submitWalletTransaction } from './wallet.jsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -82,17 +82,19 @@ function MapView({ events, origin, batchId }) {
   }, [events, origin, batchId]);
   return <div ref={div} className="journey-map" aria-label="Map of recorded batch locations"/>;
 }
-function Login({ onLogin, health, healthError, retryHealth }) {
+function Login({ onLogin, health, healthError, retryHealth, healthWaiting }) {
   const [accounts, setAccounts] = useState([]), [id, setId] = useState('farmer-1'), [password, setPassword] = useState(''), [busy, setBusy] = useState(false);
   const [accountError, setAccountError] = useState(''), [loginError, setLoginError] = useState('');
+  const [accountWaiting, setAccountWaiting] = useState(false);
   const [accountAttempt, setAccountAttempt] = useState(0);
   useEffect(() => {
     if (!['demo', 'ethereum'].includes(health?.ledgerMode)) return;
     let active = true;
     setAccountError('');
-    api('/demo/accounts')
+    retryStartupRead(() => active ? api('/demo/accounts') : undefined, () => { if (active) setAccountWaiting(true); })
       .then(result => { if (active) setAccounts(result); })
-      .catch(error => { if (active) setAccountError(error.message); });
+      .catch(error => { if (active) setAccountError(error.message); })
+      .finally(() => { if (active) setAccountWaiting(false); });
     return () => { active = false; };
   }, [health?.ledgerMode, accountAttempt]);
   const submit = async event => {
@@ -109,6 +111,7 @@ function Login({ onLogin, health, healthError, retryHealth }) {
     finally { setBusy(false); }
   };
   return <LoginView accounts={accounts} id={id} setId={setId} password={password} setPassword={setPassword} busy={busy} submit={submit} health={health} loginError={loginError}
+    connectionWaiting={healthWaiting || accountWaiting}
     connectionError={healthError || accountError}
     retryConnection={healthError ? retryHealth : () => setAccountAttempt(attempt => attempt + 1)}/>;
 }
@@ -192,9 +195,13 @@ function App() {
   const notify = message => setToast(message);
   useEffect(() => { if (toast) { const t = setTimeout(() => setToast(''), 6500); return () => clearTimeout(t); } }, [toast]);
   const [healthError, setHealthError] = useState('');
+  const [healthWaiting, setHealthWaiting] = useState(false);
   const retryHealth = () => {
     setHealthError('');
-    api('/health').then(setHealth).catch(error => setHealthError(error.message));
+    retryStartupRead(() => api('/health'), () => setHealthWaiting(true))
+      .then(setHealth)
+      .catch(error => setHealthError(error.message))
+      .finally(() => setHealthWaiting(false));
   };
   useEffect(() => {
     retryHealth();
@@ -213,7 +220,7 @@ function App() {
   const toastView = <>{toast && <div className="toast" role="status"><span>{toast}</span><button onClick={() => setToast('')} aria-label="Dismiss notification"><X size={16}/></button></div>}<TransactionNotice health={health}/></>;
   if (consumerPath) return <><Consumer id={consumerPath[1] ? decodeURIComponent(consumerPath[1]) : featuredBatchId(new URLSearchParams(window.location.search).get('batch'))} health={health} notify={notify}/>{toastView}</>;
   if (loading) return <LoadingScreen/>;
-  if (!user) return <><Login onLogin={setUser} health={health} healthError={healthError} retryHealth={retryHealth}/>{toastView}</>;
+  if (!user) return <><Login onLogin={setUser} health={health} healthError={healthError} retryHealth={retryHealth} healthWaiting={healthWaiting}/>{toastView}</>;
   const nav = [{ name: 'Overview', icon: LayoutDashboard }, { name: 'Batches', icon: Boxes }, { name: 'Cold chain', icon: Thermometer }, { name: 'Partners', icon: Users }, ...(health.ledgerMode === 'ethereum' ? [{ name: 'Performance', icon: Clock3 }] : []), ...(user.role === 'regulator' ? [{ name: 'Regulator', icon: ShieldCheck }] : [])];
   const alerts = batches.filter(hasAlert), recalled = batches.filter(b => b.status === 'recalled'), mine = batches.filter(b => b.holder.id === user.id);
   const filtered = batches.filter(b => `${b.id} ${batchLabel(b.id)} ${b.crop} ${sampleText(b.id, b.crop)} ${b.origin.name} ${b.holder.name}`.toLowerCase().includes(search.toLowerCase())).filter(b => filter === 'all' || (filter === 'mine' ? b.holder.id === user.id : filter === 'alerts' ? hasAlert(b) : b.status === 'recalled'));

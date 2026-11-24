@@ -8,6 +8,8 @@ AgriTrace tracks agricultural batches from farm to shelf. Supply-chain partners 
 
 [Open AgriTrace on Vercel](https://agri-trace-psi.vercel.app/) · [Check the Render API](https://agritrace-5ldg.onrender.com/api/health) · [View the Sepolia ledger contract](https://sepolia.etherscan.io/address/0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43)
 
+To keep GitHub open, right-click the deployment link and choose **Open link in new tab**.
+
 The React frontend runs on Vercel and forwards API requests to the Express service on Render. The API reads batch records from Ethereum Sepolia and signs approvals for updates. The participant confirms each transaction in MetaMask, and Sepolia validators confirm it on-chain.
 
 The synthetic classroom batch includes four handovers, a simulated temperature excursion, a complaint, a recall and a complaint resolution. Anyone can open the [public batch journey](https://agri-trace-psi.vercel.app/trace?batch=meerut-tomatoes) and its [verification view](https://agri-trace-psi.vercel.app/trace?batch=meerut-tomatoes&view=verification). The [validation record](docs/VALIDATION.md) and [nine transaction receipts and inclusion proofs](docs/evidence/sepolia-demo.json) document the verified workflow.
