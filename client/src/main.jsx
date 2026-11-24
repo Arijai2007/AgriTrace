@@ -1,3 +1,4 @@
+import { readApiResponse } from './apiResponse.mjs';
 import { WalletStatus, submitWalletTransaction } from './wallet.jsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -34,9 +35,13 @@ let openDialogs = 0, previousBodyOverflow = '';
 async function api(path, options = {}) {
   const headers = { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...options.headers };
   if (options.body && !(options.body instanceof FormData)) { headers['Content-Type'] = 'application/json'; options.body = JSON.stringify(options.body); }
-  const response = await fetch('/api' + path, { ...options, headers });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error || 'Request failed');
+  let response;
+  try {
+    response = await fetch('/api' + path, { ...options, headers });
+  } catch {
+    throw new Error('Could not reach the service. Check your connection and try again.');
+  }
+  const result = await readApiResponse(response);
   if (result.walletTransaction) return submitWalletTransaction(result.walletTransaction, api, operationFor(path));
   return result;
 }
@@ -152,8 +157,17 @@ function TraceDetail({ batch, verification, consumer = false, onAction, user, he
 function Empty({ title, text }) { return <div className="empty"><Sprout size={30}/><h3>{title}</h3><p>{text}</p></div>; }
 function Consumer({ id, health, notify }) {
   const [result, setResult] = useState(), [error, setError] = useState(''), [lookup, setLookup] = useState(id || '');
-  useEffect(() => { if (!id) return; api(`/trace/${encodeURIComponent(id)}`).then(setResult).catch(e => setError(e.message)); }, [id]);
-  return <div className="consumer-page"><header><a href="/" className="brand"><span className="brand-icon"><Leaf/></span>agri<span>trace</span></a><span className="small muted">Know your food. Follow its story.</span><a className="text-link" href="/">Partner sign in <ArrowUpRight size={15}/></a></header><main><span className="eyebrow">FARM TO YOU</span><h1>Every harvest has a story.</h1><p className="muted">Trace the people, places, and conditions behind your produce.</p><form className="lookup" onSubmit={e => { e.preventDefault(); window.location.href = '/trace/' + encodeURIComponent(lookup.trim()); }}><input aria-label="Batch ID" placeholder="Enter batch ID" value={lookup} onChange={e => setLookup(e.target.value)} required/><button className="button primary">Trace batch <ArrowRight size={16}/></button></form>{health.ledgerMode === 'demo' && <div className="demo-note">Demonstration data · Local records, not a live distributed blockchain.</div>}{error && <div className="alert-box" role="alert">{error}</div>}{result ? <div className="card"><TraceDetail {...result} consumer health={health} notify={notify}/></div> : id && !error ? <p>Loading batch journey…</p> : !error && <Empty title="Start with a batch ID" text="Find it on your produce label or scan an AgriTrace QR code."/>}</main><footer>AgriTrace · A clearer path from farm to shelf.</footer></div>;
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    if (!id) return;
+    let active = true;
+    setError('');
+    api(`/trace/${encodeURIComponent(id)}`)
+      .then(data => { if (active) setResult(data); })
+      .catch(err => { if (active) setError(err.message); });
+    return () => { active = false; };
+  }, [id, attempt]);
+  return <div className="consumer-page"><header><a href="/" className="brand"><span className="brand-icon"><Leaf/></span>agri<span>trace</span></a><span className="small muted">Know your food. Follow its story.</span><a className="text-link" href="/">Partner sign in <ArrowUpRight size={15}/></a></header><main><span className="eyebrow">FARM TO YOU</span><h1>Every harvest has a story.</h1><p className="muted">Trace the people, places, and conditions behind your produce.</p><form className="lookup" onSubmit={e => { e.preventDefault(); window.location.href = '/trace/' + encodeURIComponent(lookup.trim()); }}><input aria-label="Batch ID" placeholder="Enter batch ID" value={lookup} onChange={e => setLookup(e.target.value)} required/><button className="button primary">Trace batch <ArrowRight size={16}/></button></form>{health.ledgerMode === 'demo' && <div className="demo-note">Demonstration data · Local records, not a live distributed blockchain.</div>}{error && <div className="alert-box"><div><p role="alert">{error}</p><button type="button" className="button secondary small" onClick={() => setAttempt(value => value + 1)}>Retry batch lookup</button></div></div>}{result ? <div className="card"><TraceDetail {...result} consumer health={health} notify={notify}/></div> : id && !error ? <p>Loading batch journey…</p> : !error && <Empty title="Start with a batch ID" text="Find it on your produce label or scan an AgriTrace QR code."/>}</main><footer>AgriTrace · A clearer path from farm to shelf.</footer></div>;
 }
 function App() {
   const [health, setHealth] = useState({}), [user, setUser] = useState(), [loading, setLoading] = useState(true), [batches, setBatches] = useState([]), [participants, setParticipants] = useState([]), [page, setPage] = useState('Overview'), [search, setSearch] = useState(''), [filter, setFilter] = useState('all'), [modal, setModal] = useState(), [detail, setDetail] = useState(), [busy, setBusy] = useState(false), [toast, setToast] = useState(''), [loadError, setLoadError] = useState('');
