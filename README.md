@@ -2,25 +2,27 @@
 
 AgriTrace tracks agricultural batches from farm to shelf. Supply-chain partners record custody handovers and cold-chain readings, consumers follow a public QR trace, and regulators review complaints and issue recalls.
 
+[Project workflow and quick start](WORKFLOW.md)
+
 ## Live deployment
 
 [Open AgriTrace on Vercel](https://agri-trace-psi.vercel.app/) · [Check the Render API](https://agritrace-5ldg.onrender.com/api/health) · [View the Sepolia ledger contract](https://sepolia.etherscan.io/address/0xA8C778CB9Fedf4e6E70d231e2FA8920DC74adf43)
 
 The React frontend runs on Vercel and forwards API requests to the Express service on Render. The API reads batch records from Ethereum Sepolia and signs approvals for updates. The participant confirms each transaction in MetaMask, and Sepolia validators confirm it on-chain.
 
-The synthetic classroom batch `AGR-DEMO-20261112-001` includes four handovers, a simulated temperature excursion, a complaint, a recall and a complaint resolution. Anyone can open the [public batch journey](https://agri-trace-psi.vercel.app/trace/AGR-DEMO-20261112-001) and its [verification view](https://agri-trace-psi.vercel.app/trace/AGR-DEMO-20261112-001?view=verification). The [validation record](docs/VALIDATION.md) and [nine transaction receipts and inclusion proofs](docs/evidence/sepolia-demo.json) document the verified workflow.
+The synthetic classroom batch includes four handovers, a simulated temperature excursion, a complaint, a recall and a complaint resolution. Anyone can open the [public batch journey](https://agri-trace-psi.vercel.app/trace?batch=sepolia-sample) and its [verification view](https://agri-trace-psi.vercel.app/trace?batch=sepolia-sample&view=verification). The [validation record](docs/VALIDATION.md) and [nine transaction receipts and inclusion proofs](docs/evidence/sepolia-demo.json) document the verified workflow.
 
 To submit updates on the hosted site, sign in with a registered participant account. Enable test networks in MetaMask, select **Ethereum Sepolia** (chain ID `11155111`), and use **Connect MetaMask** with the wallet registered to that account. The six classroom roles share one owner-controlled test wallet. Sepolia test ETH pays for transactions. Public trace readers can use the site without a wallet. [MetaMask test network instructions](https://support.metamask.io/configure/networks/how-to-view-testnets-in-metamask)
 
 The free Render API can take time to wake. Sepolia records are stored on-chain and survive application restarts.
 
-## Transaction details, performance and tamper demonstration
+## Transaction details, performance and integrity check
 
 - **Transaction status:** a wallet update opens a status panel showing approval, pending confirmation, confirmation, rejection or revert. Expand it for the actual transaction hash, block, gas used, fee and explorer link. A receipt-check interruption stays pending until checked again; a rejected wallet prompt is not a blockchain transaction.
 - **Performance:** sign in and open **Performance**, or open the public batch's **Performance** tab. The dashboard groups gas usage and observed confirmation times by operation and exports the measurements as JSON. Use **Inspect receipt** to look up an older AgriTrace hash; the lookup reads the configured chain and checks the destination contract.
 - **Tamper detection:** open a batch's **Verification** tab and find **Change a copy. Check the proof.** Select an event, simulate an edit or import edited JSON, then restore the original. The browser checks a SHA-256 Merkle proof against the loaded batch root. An uploaded root cannot replace that reference, and the demonstration never writes to the ledger.
 
-Try the [sample batch performance view](https://agri-trace-psi.vercel.app/trace/AGR-DEMO-20261112-001?view=performance). To inspect an existing receipt without submitting a transaction, use `0x871495a10d77a1770b1ff3d281e1c7679e12026cadca45f8c13eca769828884d` from the classroom demonstration.
+Try the [sample batch performance view](https://agri-trace-psi.vercel.app/trace?batch=sepolia-sample&view=performance). To inspect an existing receipt without submitting a transaction, use `0x871495a10d77a1770b1ff3d281e1c7679e12026cadca45f8c13eca769828884d` from the classroom demonstration.
 
 Measurements are stored in this browser, scoped to the chain and contract, with at most 100 attempts retained. Confirmation time is measured from the wallet returning a hash until the active tab observes a mined receipt; it includes RPC/polling delay and excludes time spent approving in MetaMask. Imported or recovered receipts show **Not measured** for historical timing. Gas fees are calculated from receipt gas used and effective gas price; recorded reverted transactions can still incur fees. These samples are not a network throughput benchmark.
 
@@ -28,7 +30,7 @@ Measurements are stored in this browser, scoped to the chain and contract, with 
 
 | `LEDGER_MODE` | Storage and authorization | Use |
 | --- | --- | --- |
-| `demo` (default) | Local JSON file, app sign-in and the same domain rules used by Fabric chaincode. Integrity checks cover event hashes and Merkle proofs. | Seeded local demo or a separate file-backed Render demo. A local administrator controls the file. |
+| `demo` (default) | Local JSON file, app sign-in and the same domain rules used by Fabric chaincode. Integrity checks cover event hashes and Merkle proofs. | Local practice with sample data or a separate Render deployment with a file ledger. A local administrator controls the file. |
 | `ethereum` | Solidity ledger on the configured EVM network. The API approves writes and the registered participant wallet submits each transaction. | Local Ethereum development on Ganache, or the hosted application on Sepolia. |
 | `fabric` | Hyperledger Fabric Gateway and Node chaincode. The API uses the signed-in participant's enrolled X.509 identity. | Four-organization Fabric development network with its own setup and accounts. |
 
@@ -42,9 +44,9 @@ Install **Node.js 22.12 or later in the 22.x series, or Node.js 24**. From the r
 npm ci
 ```
 
-### File-backed demo
+### Local file ledger
 
-The commands below use the default demo mode and ports. For custom local settings, use [`.env.example`](.env.example) as the template for a root `.env` and set `LEDGER_MODE=demo`. If you override `DATA_FILE`, use the same path when seeding and running the API.
+The commands below use the default file ledger and ports. For custom local settings, use [`.env.example`](.env.example) as the template for a root `.env` and set `LEDGER_MODE=demo`. If you override `DATA_FILE`, use the same path when seeding and running the API.
 
 For development, seed the sample batches and start both processes.
 
@@ -64,7 +66,7 @@ npm run build
 npm run start:demo
 ```
 
-Select a demo account and sign in with the built-in classroom password `agritrace-demo`, or the `DEMO_PASSWORD` you configured locally. The seed commands preserve a ledger that already contains batches. On an initial seed, `AGR-2026-001` is with the transporter, `AGR-2026-002` is with the retailer, and `AGR-2026-003` has a temperature alert and an open complaint.
+Select a classroom account and sign in with the built-in classroom password `agritrace-demo`, or the `DEMO_PASSWORD` you configured locally. The seed commands preserve a ledger that already contains batches. On an initial seed, `AGR-2026-001` is with the transporter, `AGR-2026-002` is with the retailer, and `AGR-2026-003` has a temperature alert and an open complaint.
 
 ### Local Ethereum with Ganache
 
@@ -111,9 +113,9 @@ Use the profile button in the desktop sidebar or the sign-out icon in the mobile
 2. **Render API.** Use a Node web service with the repository root, build command `npm ci --include=dev && npm run build`, start command `npm start`, and health check `/api/health`. Keep `LEDGER_MODE=ethereum`, chain ID `11155111`, the existing contract address and deployment block, and the configured RPC and account file for the live service. Keep the API validator key, JWT secret and other backend secrets on Render. [Sepolia server configuration](docs/ETHEREUM.md#sepolia-deployment-through-a-script)
 3. **Verify routing.** Open the Vercel site's `/api/health` and confirm `ledgerMode` is `ethereum` and `ethereum.chainId` is `11155111`. Open the public batch link directly and check its trace. Vercel and Render manage branch connections and automatic deployments separately.
 
-### Separate file-backed Render demo
+### Separate Render deployment with a file ledger
 
-The [`render.yaml` Blueprint](render.yaml) starts a separate free Node service with `LEDGER_MODE=demo` and `npm run start:demo`. It serves the built React frontend and API on one URL. Use this Blueprint only for a separate demo service. Choose a `DEMO_PASSWORD`, then confirm the new service reports `ledgerMode: "demo"` at `/api/health`. The demo JSON is written to ephemeral storage and can reset after sleep, restart or redeploy. [Render demo deployment guide](docs/DEPLOYMENT.md)
+The [`render.yaml` Blueprint](render.yaml) starts a separate free Node service with `LEDGER_MODE=demo` and `npm run start:demo`. It serves the built React frontend and API on one URL. Use this Blueprint only for a separate practice service. Choose a `DEMO_PASSWORD`, then confirm the new service reports `ledgerMode: "demo"` at `/api/health`. The local ledger file is written to ephemeral storage and can reset after sleep, restart or redeploy. [Render setup guide](docs/DEPLOYMENT.md)
 
 ## Tests and build
 
@@ -126,14 +128,14 @@ npm run smoke
 npm run anchor:compile
 ```
 
-The tests cover domain rules, custody and recalls, Merkle proofs, API authorization, file persistence, Fabric chaincode with stub identities, and mined Ethereum transactions on a local test chain. The Vite build writes to `client/dist`. Run smoke after building. It uses a disposable demo ledger to check the production server, compiled assets, public trace routes and API. The anchor compilation checks the separate `BatchAnchor.sol` contract.
+The tests cover domain rules, custody and recalls, Merkle proofs, API authorization, file persistence, Fabric chaincode with stub identities, and mined Ethereum transactions on a local test chain. The Vite build writes to `client/dist`. Run smoke after building. It uses a disposable local ledger to check the production server, compiled assets, public trace routes and API. The anchor compilation checks the separate `BatchAnchor.sol` contract.
 
 ## Features and scope
 
 - **Batch and custody records** capture farm origin, declared organic status, checkpoint coordinates, quantity, grade, notes, shelf life and prices. Only the current holder can transfer custody, and the received quantity cannot exceed the prior quantity.
 - **Cold-chain monitoring** records device IDs, temperature and humidity, and flags threshold breaches. Sensor simulators and an MQTT adapter are included.
 - **Public trace and integrity** include a QR link, checkpoint map, event timeline, price history, certificate records, recall status, trace exports, event hashes and Merkle inclusion proofs.
-- **Certificates and anchoring** are optional integrations. A configured Kubo IPFS node accepts PDF, PNG and JPEG certificate uploads. The ledger stores the CID and SHA-256 digest, which consumers can use to check a file. In demo or Fabric mode, the separate `BatchAnchor.sol` integration can publish a batch snapshot commitment to Sepolia when configured. The hosted Ethereum ledger uses `AgriTraceLedger.sol` for its batch records.
+- **Certificates and anchoring** are optional integrations. A configured Kubo IPFS node accepts PDF, PNG and JPEG certificate uploads. The ledger stores the CID and SHA-256 digest, which consumers can use to check a file. In local file or Fabric mode, the separate `BatchAnchor.sol` integration can publish a batch snapshot commitment to Sepolia when configured. The hosted Ethereum ledger uses `AgriTraceLedger.sol` for its batch records.
 - **Regulator tools** cover audit review, complaint resolution and recalls. A recall blocks further custody, condition and certificate updates.
 
 The hosted Sepolia classroom workflow is the validated submission scope. AgriTrace is an academic prototype. Checkpoint maps show recorded locations, certificate issuers and organic declarations are unverified, and sensor readings can be simulated. Live Kubo and MQTT services, physical sensor attestation and the four-organization Fabric network remain outside the recorded live validation. The PWA manifest supports standalone display on compatible browsers. The app requires access to its API and ledger.
