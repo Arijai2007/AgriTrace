@@ -38,8 +38,10 @@ async function api(path, options = {}) {
   if (options.body && !(options.body instanceof FormData)) { headers['Content-Type'] = 'application/json'; options.body = JSON.stringify(options.body); }
   let response;
   try {
-    response = await fetch('/api' + path, { ...options, headers });
-  } catch {
+    const signal = options.signal ?? (!options.method || options.method === 'GET' ? AbortSignal.timeout(25000) : undefined);
+    response = await fetch('/api' + path, { ...options, headers, signal });
+  } catch (error) {
+    if (error.name === 'TimeoutError') throw new Error('The service took too long to respond. Please try again.');
     throw new Error('Could not reach the service. Check your connection and try again.');
   }
   const result = await readApiResponse(response);
@@ -80,21 +82,35 @@ function MapView({ events, origin, batchId }) {
   }, [events, origin, batchId]);
   return <div ref={div} className="journey-map" aria-label="Map of recorded batch locations"/>;
 }
-function Login({ onLogin, health, notify }) {
+function Login({ onLogin, health, healthError, retryHealth }) {
   const [accounts, setAccounts] = useState([]), [id, setId] = useState('farmer-1'), [password, setPassword] = useState(''), [busy, setBusy] = useState(false);
-  useEffect(() => { if (['demo', 'ethereum'].includes(health?.ledgerMode)) api('/demo/accounts').then(setAccounts).catch(error => notify(error.message)); }, [health]);
+  const [accountError, setAccountError] = useState(''), [loginError, setLoginError] = useState('');
+  const [accountAttempt, setAccountAttempt] = useState(0);
+  useEffect(() => {
+    if (!['demo', 'ethereum'].includes(health?.ledgerMode)) return;
+    let active = true;
+    setAccountError('');
+    api('/demo/accounts')
+      .then(result => { if (active) setAccounts(result); })
+      .catch(error => { if (active) setAccountError(error.message); });
+    return () => { active = false; };
+  }, [health?.ledgerMode, accountAttempt]);
   const submit = async event => {
     event.preventDefault();
+    if (!health?.ledgerMode || busy) return;
+    setLoginError('');
     setBusy(true);
     try {
       const result = await api('/auth/login', { method: 'POST', body: { id, password } });
       token = result.token;
       sessionStorage.setItem('agritrace-token', token);
       onLogin(result.user);
-    } catch (error) { notify(error.message); }
+    } catch (error) { setLoginError(error.message); }
     finally { setBusy(false); }
   };
-  return <LoginView accounts={accounts} id={id} setId={setId} password={password} setPassword={setPassword} busy={busy} submit={submit} health={health}/>;
+  return <LoginView accounts={accounts} id={id} setId={setId} password={password} setPassword={setPassword} busy={busy} submit={submit} health={health} loginError={loginError}
+    connectionError={healthError || accountError}
+    retryConnection={healthError ? retryHealth : () => setAccountAttempt(attempt => attempt + 1)}/>;
 }
 function BatchForm({ submit, busy }) {
   const [gps, setGps] = useState({ lat: '28.9845', lng: '77.7064' });
@@ -175,7 +191,16 @@ function App() {
   const signOut = () => { token = null; sessionStorage.removeItem('agritrace-token'); setUser(null); setDetail(null); setModal(null); setBatches([]); setPage('Overview'); setSearch(''); setFilter('all'); setLoadError(''); };
   const notify = message => setToast(message);
   useEffect(() => { if (toast) { const t = setTimeout(() => setToast(''), 6500); return () => clearTimeout(t); } }, [toast]);
-  useEffect(() => { api('/health').then(setHealth).catch(e => setLoadError(e.message)); if (token) api('/me').then(setUser).catch(() => { token = null; sessionStorage.removeItem('agritrace-token'); }).finally(() => setLoading(false)); else setLoading(false); }, []);
+  const [healthError, setHealthError] = useState('');
+  const retryHealth = () => {
+    setHealthError('');
+    api('/health').then(setHealth).catch(error => setHealthError(error.message));
+  };
+  useEffect(() => {
+    retryHealth();
+    if (token) api('/me').then(setUser).catch(() => { token = null; sessionStorage.removeItem('agritrace-token'); }).finally(() => setLoading(false));
+    else setLoading(false);
+  }, []);
   const refresh = async () => { try { const [b, p] = await Promise.all([api('/batches'), api('/participants')]); setBatches(b); setParticipants(p); setLoadError(''); } catch (e) { setLoadError(e.message); } };
   useEffect(() => { if (user) refresh(); }, [user]);
   const openBatch = async id => { try { setDetail(await api(`/trace/${encodeURIComponent(id)}`)); } catch (e) { notify(e.message); } };
@@ -188,7 +213,7 @@ function App() {
   const toastView = <>{toast && <div className="toast" role="status"><span>{toast}</span><button onClick={() => setToast('')} aria-label="Dismiss notification"><X size={16}/></button></div>}<TransactionNotice health={health}/></>;
   if (consumerPath) return <><Consumer id={consumerPath[1] ? decodeURIComponent(consumerPath[1]) : featuredBatchId(new URLSearchParams(window.location.search).get('batch'))} health={health} notify={notify}/>{toastView}</>;
   if (loading) return <LoadingScreen/>;
-  if (!user) return <><Login onLogin={setUser} health={health} notify={notify}/>{loadError && <div className="connection-error">Cannot connect to the API. Start AgriTrace’s server and reload.</div>}{toastView}</>;
+  if (!user) return <><Login onLogin={setUser} health={health} healthError={healthError} retryHealth={retryHealth}/>{toastView}</>;
   const nav = [{ name: 'Overview', icon: LayoutDashboard }, { name: 'Batches', icon: Boxes }, { name: 'Cold chain', icon: Thermometer }, { name: 'Partners', icon: Users }, ...(health.ledgerMode === 'ethereum' ? [{ name: 'Performance', icon: Clock3 }] : []), ...(user.role === 'regulator' ? [{ name: 'Regulator', icon: ShieldCheck }] : [])];
   const alerts = batches.filter(hasAlert), recalled = batches.filter(b => b.status === 'recalled'), mine = batches.filter(b => b.holder.id === user.id);
   const filtered = batches.filter(b => `${b.id} ${batchLabel(b.id)} ${b.crop} ${sampleText(b.id, b.crop)} ${b.origin.name} ${b.holder.name}`.toLowerCase().includes(search.toLowerCase())).filter(b => filter === 'all' || (filter === 'mine' ? b.holder.id === user.id : filter === 'alerts' ? hasAlert(b) : b.status === 'recalled'));
