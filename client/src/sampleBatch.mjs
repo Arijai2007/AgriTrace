@@ -1,18 +1,25 @@
 export const SEPOLIA_SAMPLE_ID = 'AGR-DEMO-20261112-001';
-export const SEPOLIA_SAMPLE_PATH = '/trace?batch=sepolia-sample';
+const featuredBatch = 'meerut-tomatoes';
+
+export function featuredBatchId(slug) {
+  return slug === featuredBatch || slug === 'sepolia-sample' ? SEPOLIA_SAMPLE_ID : '';
+}
 
 export function batchLabel(id) {
-  return id === SEPOLIA_SAMPLE_ID ? 'Sepolia sample batch' : id;
+  return id === SEPOLIA_SAMPLE_ID ? 'Meerut tomato batch' : id;
 }
 
 export function tracePath(id) {
-  return id === SEPOLIA_SAMPLE_ID ? SEPOLIA_SAMPLE_PATH : '/trace/' + encodeURIComponent(id);
+  return id === SEPOLIA_SAMPLE_ID ? '/trace?batch=' + featuredBatch : '/trace/' + encodeURIComponent(id);
 }
 
 export function sampleText(id, text) {
   if (id !== SEPOLIA_SAMPLE_ID || typeof text !== 'string') return text;
-  return text
-    .replace(/^Classroom demonstration:\s*/, '')
-    .replace(/Classroom demonstration (complaint|recall)/g, 'Sample $1')
-    .replace(/Classroom demo /gi, 'Sample ');
+  const label = text
+    .replace(/^Classroom demo /i, '')
+    .replace(/^Classroom demonstration(?=[: ])/i, '')
+    .replace(/^:\s*/, '')
+    .replace(/^\s+/, '')
+    .replace(/^Classroom audit/i, 'Audit');
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }

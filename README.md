@@ -10,7 +10,7 @@ AgriTrace tracks agricultural batches from farm to shelf. Supply-chain partners 
 
 The React frontend runs on Vercel and forwards API requests to the Express service on Render. The API reads batch records from Ethereum Sepolia and signs approvals for updates. The participant confirms each transaction in MetaMask, and Sepolia validators confirm it on-chain.
 
-The synthetic classroom batch includes four handovers, a simulated temperature excursion, a complaint, a recall and a complaint resolution. Anyone can open the [public batch journey](https://agri-trace-psi.vercel.app/trace?batch=sepolia-sample) and its [verification view](https://agri-trace-psi.vercel.app/trace?batch=sepolia-sample&view=verification). The [validation record](docs/VALIDATION.md) and [nine transaction receipts and inclusion proofs](docs/evidence/sepolia-demo.json) document the verified workflow.
+The synthetic classroom batch includes four handovers, a simulated temperature excursion, a complaint, a recall and a complaint resolution. Anyone can open the [public batch journey](https://agri-trace-psi.vercel.app/trace?batch=meerut-tomatoes) and its [verification view](https://agri-trace-psi.vercel.app/trace?batch=meerut-tomatoes&view=verification). The [validation record](docs/VALIDATION.md) and [nine transaction receipts and inclusion proofs](docs/evidence/sepolia-demo.json) document the verified workflow.
 
 To submit updates on the hosted site, sign in with a registered participant account. Enable test networks in MetaMask, select **Ethereum Sepolia** (chain ID `11155111`), and use **Connect MetaMask** with the wallet registered to that account. The six classroom roles share one owner-controlled test wallet. Sepolia test ETH pays for transactions. Public trace readers can use the site without a wallet. [MetaMask test network instructions](https://support.metamask.io/configure/networks/how-to-view-testnets-in-metamask)
 
@@ -22,15 +22,15 @@ The free Render API can take time to wake. Sepolia records are stored on-chain a
 - **Performance:** sign in and open **Performance**, or open the public batch's **Performance** tab. The dashboard groups gas usage and observed confirmation times by operation and exports the measurements as JSON. Use **Inspect receipt** to look up an older AgriTrace hash; the lookup reads the configured chain and checks the destination contract.
 - **Tamper detection:** open a batch's **Verification** tab and find **Change a copy. Check the proof.** Select an event, simulate an edit or import edited JSON, then restore the original. The browser checks a SHA-256 Merkle proof against the loaded batch root. An uploaded root cannot replace that reference, and the demonstration never writes to the ledger.
 
-Try the [sample batch performance view](https://agri-trace-psi.vercel.app/trace?batch=sepolia-sample&view=performance). To inspect an existing receipt without submitting a transaction, use `0x871495a10d77a1770b1ff3d281e1c7679e12026cadca45f8c13eca769828884d` from the classroom demonstration.
+Try the [batch performance view](https://agri-trace-psi.vercel.app/trace?batch=meerut-tomatoes&view=performance). To inspect an existing receipt without submitting a transaction, use `0x871495a10d77a1770b1ff3d281e1c7679e12026cadca45f8c13eca769828884d` from the classroom demonstration.
 
-Measurements are stored in this browser, scoped to the chain and contract, with at most 100 attempts retained. Confirmation time is measured from the wallet returning a hash until the active tab observes a mined receipt; it includes RPC/polling delay and excludes time spent approving in MetaMask. Imported or recovered receipts show **Not measured** for historical timing. Gas fees are calculated from receipt gas used and effective gas price; recorded reverted transactions can still incur fees. These samples are not a network throughput benchmark.
+Measurements are stored in this browser, scoped to the chain and contract, with at most 100 attempts retained. Confirmation time is measured from the wallet returning a hash until the active tab observes a mined receipt; it includes RPC/polling delay and excludes time spent approving in MetaMask. Imported or recovered receipts show **Not measured** for historical timing. Gas fees are calculated from receipt gas used and effective gas price; recorded reverted transactions can still incur fees. The dashboard measures individual transactions.
 
 ## Ledger modes
 
 | `LEDGER_MODE` | Storage and authorization | Use |
 | --- | --- | --- |
-| `demo` (default) | Local JSON file, app sign-in and the same domain rules used by Fabric chaincode. Integrity checks cover event hashes and Merkle proofs. | Local practice with sample data or a separate Render deployment with a file ledger. A local administrator controls the file. |
+| `demo` (default) | Local JSON file, app sign-in and the same domain rules used by Fabric chaincode. Integrity checks cover event hashes and Merkle proofs. | Local practice with seeded records or a separate Render deployment with a file ledger. A local administrator controls the file. |
 | `ethereum` | Solidity ledger on the configured EVM network. The API approves writes and the registered participant wallet submits each transaction. | Local Ethereum development on Ganache, or the hosted application on Sepolia. |
 | `fabric` | Hyperledger Fabric Gateway and Node chaincode. The API uses the signed-in participant's enrolled X.509 identity. | Four-organization Fabric development network with its own setup and accounts. |
 
@@ -48,7 +48,7 @@ npm ci
 
 The commands below use the default file ledger and ports. For custom local settings, use [`.env.example`](.env.example) as the template for a root `.env` and set `LEDGER_MODE=demo`. If you override `DATA_FILE`, use the same path when seeding and running the API.
 
-For development, seed the sample batches and start both processes.
+For development, seed the practice batches and start both processes.
 
 ```sh
 npm run seed
@@ -89,7 +89,7 @@ Open the Vite URL printed in the terminal. To serve a built frontend from Expres
 3. Sign in as the farmer with the built-in local password `agritrace-local`, or the `LOCAL_PASSWORD` you set before starting Ganache. Register a new batch, approve the transaction and wait for confirmation.
 4. To act as a different participant, sign in as that role and switch MetaMask to its generated account before sending an update.
 
-A new Ganache ledger starts empty. Open `/trace` on the frontend you started and enter the ID of a batch you created. The landing-page Ethereum labels and sample shortcuts refer to Sepolia. Check the wallet panel or `/api/health` to confirm the active local network. See the [Ethereum setup guide](docs/ETHEREUM.md) for local persistence, contract deployment and the wallet approval model.
+A new Ganache ledger starts empty. Open `/trace` on the frontend you started and enter the ID of a batch you created. The landing-page Ethereum labels and hosted batch shortcuts refer to Sepolia. Check the wallet panel or `/api/health` to confirm the active local network. See the [Ethereum setup guide](docs/ETHEREUM.md) for local persistence, contract deployment and the wallet approval model.
 
 ### Hyperledger Fabric
 

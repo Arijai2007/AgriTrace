@@ -19,7 +19,7 @@ For a write, the participant signs into a role account and submits a batch actio
 
 Install Node.js 22.12+ in the 22.x series or Node.js 24. Run commands from the repository root.
 
-### Quick start with sample data
+### Quick start with seeded records
 
 ```sh
 npm ci
@@ -43,7 +43,7 @@ With the default local settings, open [localhost:4000](http://127.0.0.1:4000), s
 3. As a participant, report an issue. Sign in as the **regulator** to review it, recall the batch, and record a resolution. The recall remains in force after the complaint is resolved.
 4. Open **Batch QR** to see the consumer view. In **Verification**, select **Simulate an edit** to see a copied event fail its Merkle proof, then select **Restore original**. In Ethereum mode, **Performance** shows gas from receipts and confirmation times measured by the browser for new submissions.
 
-The hosted [AgriTrace website](https://agri-trace-psi.vercel.app/) already has a [completed Sepolia sample batch](https://agri-trace-psi.vercel.app/trace?batch=sepolia-sample). Use your registered MetaMask wallet and Sepolia test ETH for hosted updates. The sample trace and integrity check are available without signing in.
+The hosted [AgriTrace website](https://agri-trace-psi.vercel.app/) already has a [tomato batch recorded on Sepolia](https://agri-trace-psi.vercel.app/trace?batch=meerut-tomatoes). Use your registered MetaMask wallet and Sepolia test ETH for hosted updates. The batch trace and integrity check are available without signing in.
 
 ## Check and deploy changes
 
